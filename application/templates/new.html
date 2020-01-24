@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  <p>
+    Placeholder for log upload, currently no real upload, just a way to add a single match (as a log containing only a single match)
+    <form method="POST" action="/newlog">
+        round 1
+        <select name="round1" required>
+          <option value="1">win</option>
+          <option value="0">loss</option>
+        </select>
+        round 2
+        <select name="round2" required>
+          <option value="1">win</option>
+          <option value="0">loss</option>
+        </select>
+        round 3
+        <select name="round3" required>
+          <option value="1">win</option>
+          <option value="0">loss</option>
+          <option value="2" >not played</option>
+        </select>
+        <input type="submit" value="Submit">
+      </form>
+  </p>
+{% endblock %}

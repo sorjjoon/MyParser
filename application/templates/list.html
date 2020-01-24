@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<p>
+    Saved matches. Placeholder so looks really dumb atm
+    Note, Database has functionality for deleting a log file, and all matches associated with it, but this is not currently supported by the gui
+    {%for log in logs%}
+    <br>
+    ----------------
+    <br>
+        {%for match in log%}
+
+        <td>{{ match }}</td>
+        <br>
+        {% endfor %}
+    {% endfor %}
+</p>
+{% endblock %}
