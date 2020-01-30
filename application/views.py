@@ -1,10 +1,24 @@
 from flask import render_template, request
-from application import app, db
+from application import app, db, uploads
 
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload_log():
+    
+    
+    if request.method == "POST" and "file" in request.files:
+        print("log upload")
+        log_name = uploads.save(request.files["file"])
+        parse_log(log_name)
+    else:
+        
+        return render_template("upload.html")   
 
 
 @app.route("/")
 def index():
+    
     return render_template("index.html")
 
 
