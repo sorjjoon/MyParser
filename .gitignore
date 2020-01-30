@@ -1,3 +1,9 @@
 /venv
 __pycache__
 data.db
+/uploads
+*.txt
+!requirements.txt
+procfile
+*.pyc
+*.json

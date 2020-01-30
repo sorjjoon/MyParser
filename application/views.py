@@ -1,24 +1,19 @@
-from flask import render_template, request
+from flask import render_template, request, url_for
 from application import app, db, uploads
+from application.reader import parse_log
+from application.forms import LogForm
 
 
-
-@app.route("/upload", methods=["GET", "POST"])
-def upload_log():
+def validate_file(file):
+    if file.content_type != "text/plain" :
+        return False
     
-    
-    if request.method == "POST" and "file" in request.files:
-        print("log upload")
-        log_name = uploads.save(request.files["file"])
-        parse_log(log_name)
-    else:
-        
-        return render_template("upload.html")   
+    return True
+
 
 
 @app.route("/")
-def index():
-    
+def index():    
     return render_template("index.html")
 
 

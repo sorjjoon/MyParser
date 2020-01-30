@@ -12,7 +12,7 @@ def parse_log(log_name: str):
     matches =[]
     rounds=[]
     try:
-        with open(path,"r") as f:
+        with open(path,"r", encoding="iso-8859-1") as f:
             #TODO, if time make file reading work properly
             in_match = False   #true while inside a match, false otherwise
             i =0
@@ -20,10 +20,11 @@ def parse_log(log_name: str):
                 i+=1
                 if in_match:
                     
-                    if "Deserter Detection" in line:     # {836045448945477} is id for  Deserter Detection
+                    if "ApplyEffect {836045448945477}: Deserter Detection {3297813328822272}" in line:     # {836045448945477} is id for  Deserter Detection
                         rounds.append(0)        #Determines start of round, TODO win/loss prediction
                         
-                    elif "ApplyEffect {836045448945477}: Safe Login Immunity {973870949466372}" in line:     
+                    elif "ApplyEffect {836045448945477}: Safe Login Immunity {973870949466372}" in line: 
+                        print(i)    
                         matches.append(rounds)
                         rounds=[]
                         #print(str(i)+"      "+line)
@@ -39,6 +40,7 @@ def parse_log(log_name: str):
         print(r)
     finally:
         f.close()
+        print("deleting "+path)
         if os.path.isfile(path) and __name__ != "__main__": #name check for testing
             os.remove(path)
 

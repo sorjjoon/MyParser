@@ -1,6 +1,7 @@
 import sqlite3
 
 class data:
+    #TODO match_player
     
     def __init__(self):
         try:
@@ -11,6 +12,14 @@ class data:
             print(e)
 
             
+    def get_password(self, username: str):
+        c=self.conn.cursor()
+        print("fetching password for "+username)
+        c.execute("SELECT password FROM User WHERE Username LIKE ?",[username])
+        password=c.fetchone()
+        c.close()
+        return password
+
     def get_log_ids(self, user_id: int):
         c=self.conn.cursor()
         c.execute("SELECT id FROM log WHERE ownerID = ?", [user_id])

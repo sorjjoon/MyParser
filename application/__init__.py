@@ -4,7 +4,6 @@ from flask_uploads import UploadSet, configure_uploads, TEXT
 import os
 from flask import render_template, request
 
-
 app = Flask(__name__)
 
 uploads = UploadSet("logs", TEXT)
@@ -20,3 +19,4 @@ db.create_tables()
 
 from application import views
 
+from application.auth import account

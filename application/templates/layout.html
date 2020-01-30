@@ -2,13 +2,18 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>TodoApp</title>
+    <title>MyParser</title>
   </head>
 
   <body>
+
+    <ul>
+      <li><a href="{{ url_for('index') }}">Main Page</a></li>
+      <li><a href="{{ url_for('upload_log') }}">Add a log</a></li>
+          </ul>
     {% block body %}
       <p>
-        Content.
+        content
       </p>
     {% endblock %}
   </body>
