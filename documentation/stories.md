@@ -1,4 +1,4 @@
-#User Stories
+### User Stories  
 Using the serivce use has the ability to upload logs provided by the game to the website. The website stores the logs, and analyzes logs the log to determine how many arena games the user has played, makes a guess whether the player won or lost the round (this is not always possible, but in some cases this can be done) and checks which players the user had on their team, and on the opposing team (again this can not be done with complete precision, since the only way a log would have note of a player, is if the user had interacted with them in some way, and it might be beyond the scope of this project to account all possible ways for players to interact)
   
 With this information the service seeks to provide the user with numerous statistics regarding their games, such as overall win-rate, win-rate when playing with/against certain players, etc.
