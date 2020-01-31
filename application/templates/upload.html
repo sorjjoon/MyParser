@@ -1,65 +1,69 @@
 {% extends "layout.html" %}
 
 {% block body %}
-  <form method="POST" action="{{ url_for('upload_log') }}" enctype="multipart/form-data">
-    <table>
-      <tr>
+<form method="POST" action="{{ url_for('upload_log') }}" enctype="multipart/form-data" >
+  <table>
+    <tr>
 
-	<td>
-	  {{ form.log }}
-	</td>
-      </tr>
-      <tr>
-	<td colspan="2">
-	  <input type="submit" value="Upload Log"/>
-  </td>
-  <td>
+      <td>
+        {{ form.log }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <input type="submit" value="Upload Log" />
+      </td>
 
-	</td>
-      </tr>
+    </tr>
+
   </form>
-  <br>
-  <ul>
-    {% for error in errors %}
-    <li>{{ error }}</li>
-    {% endfor %}
-  </ul>
+    {% if matches is defined %}
 
-  <ul>    <form method="POST" action="/newlog">
-    {% for match in matches %}
-    <br>
-    <b>Game {{match.number}}</b>
-    <br>
-    round 1
-    <select name=round1 required>
-      <option value="1">win</option>
-      <option value="0">loss</option>
-    </select>
+<br>
 
+<form method="POST" action="/newlog">
+  <!-- TODO make this more user friendly -->
+  <!-- TODO validate input (round 3 can only be played if round1 != round2) -->
+  Date
   <br>
-    round 2
-    <select name="round2" required>
-      <option value="1">win</option>
-      <option value="0">loss</option>
-    </select>
+  <input type="date" name="date" required>
+  <br>
+  {% for match in matches %}
+  <br>
+  <b>Game {{match.number}}</b>
+  <br>
+  round 1
+  <select name={{ match.number ~ "round1" }} required>
+    <option value="1">win</option>
+    <option value="0">loss</option>
+  </select>
 
   <br>
-    round 3
-    <select name="round3" required>
-      <option value="1">win</option>
-      <option value="0">loss</option>
-      <option value="2" >not played</option>
-    </select>
+  round 2
+  <select name= {{ match.number ~ "round2" }} required>
+    <option value="1">win</option>
+    <option value="0">loss</option>
+  </select>
 
   <br>
-    {% endfor %}
-    <input type="submit" value="Submit">
-  </form>
-    {% for match in matches %}
-    <li>{{ match }}</li>
-    {% endfor %}
-  </ul>
+  round 3
+  <select name={{ match.number ~ "round3" }} required>
+    <option value="1">win</option>
+    <option value="0">loss</option>
+    <option value="2">not played</option>
+  </select>
 
-  {% endblock %}
+  <br>
+  {% endfor %}
+  <input type="submit" value="Submit">
+</form>
 
-  
+{% endif %}
+
+
+<td>
+  {{error}}
+</td>
+
+
+{% endblock %}

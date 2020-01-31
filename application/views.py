@@ -1,26 +1,22 @@
 from flask import render_template, request, url_for
+from flask_login import login_required, current_user
 from application import app, db, uploads
 from application.reader import parse_log
 from application.forms import LogForm
-
-
-def validate_file(file):
-    if file.content_type != "text/plain" :
-        return False
-    
-    return True
-
-
+from application.domain.log import log, match
 
 @app.route("/")
 def index():    
     return render_template("index.html")
 
 
+
+
 @app.route("/list", methods=["GET"])
+@login_required
 def get_matches():
-    #TODO make this not shit
-    log_ids = db.get_log_ids(1)
+    print(current_user.get_id())
+    log_ids = db.get_log_ids(current_user.get_id())
     logs=[]
     for tuples in log_ids:
         logs.append(tuples[0])
@@ -49,18 +45,32 @@ def get_matches():
 
 
 
-@app.route("/newlog", methods=["GET"])
-def new_log():
-    return render_template("new.html")
-
 
 @app.route("/newlog", methods=["POST"])
+@login_required
 def add_log():
     matches =[]
-    round3 = int(request.form.get("round3"))
-    if(round3==2):
-        round3=None
-    matches.append((int(request.form.get("round1")),int(request.form.get("round2")),round3))
-    db.insert_log(1,matches)
+    #key format is match_number+"round"+round_number (for example 3round2), match_number is irrelevant (just chronoligal order they appeared in log, can be expanded later)
+    
+    #len(request.form.keys() always divisiable by 3
+    size = len(list(request.form.keys()))-1 #-1 because date
+    date = request.form.get("date")
+    print(date)
+    print(type(date))
+    print(request.form)
+    for match_number in range(1,int(size/3)+1):
+        round1=bool(int(request.form.get(str(match_number)+"round1")))
+        
+        round2=bool(int(request.form.get(str(match_number)+"round2")))
+
+        if request.form.get(str(match_number)+"round3")=="2":
+            round3=None
+        else:
+            round3=bool(int(request.form.get(str(match_number)+"round3")))
+        
+        matches.append((round1, round2, round3))
+
+    db.insert_log(current_user.get_id(),matches,date)
+
     return render_template("index.html")
 

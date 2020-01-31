@@ -6,7 +6,19 @@
   </head>
 
   <body>
-
+    {% if current_user.is_authenticated %}
+    <p>
+Logged in as {{ current_user.name }} 
+<br>
+<a href="{{ url_for('update_password') }}">Change Password</a>
+<br>
+<a href="{{ url_for('logout_auth') }}">Logout</a>
+    </p>
+    {% else %}
+    <a href="{{ url_for('register') }}">Create User</a>
+    <br>
+    <a href="{{ url_for('login_auth') }}">Login</a>
+    {% endif %}
     <ul>
       <li><a href="{{ url_for('index') }}">Main Page</a></li>
       <li><a href="{{ url_for('upload_log') }}">Add a log</a></li>

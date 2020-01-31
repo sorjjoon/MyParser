@@ -1,7 +1,8 @@
 import sqlite3
-
+from application.auth.account import account
 class data:
     #TODO match_player
+    #TODO make everything try - with (leaks)
     
     def __init__(self):
         try:
@@ -11,14 +12,48 @@ class data:
         except Exception as e:
             print(e)
 
-            
-    def get_password(self, username: str):
+    def get_user_by_id(self, user_id: int):
+        c=self.conn.cursor()
+        print("fetching password for "+str(user_id))
+        c.execute("SELECT id,username,password FROM User WHERE id = ?",[user_id])
+        #Should never fetch multiples
+        row=c.fetchone()
+        c.close()
+        if row is not None:
+            return account(row[0],row[1], row[2])
+        else:
+            return None
+        
+    def insert_user(self, username: str, password: str):
+        c=self.conn.cursor()
+        c.execute("SELECT id FROM User WHERE Username LIKE ?",[username])
+        row=c.fetchone()
+        if row is None:
+            c.execute("INSERT INTO User(username, password) VALUES(?, ?) ",[username, password])
+            self.conn.commit()
+        else:
+            raise ValueError("username in use")
+        c.close()
+
+        
+    def update_password(self, user_id: int, new_password: str):
+        c=self.conn.cursor()
+        print("updating password for "+str(user_id))
+        c.execute("UPDATE User SET Password = ? WHERE id = ?",[new_password, user_id])
+        c.close()
+
+
+    def get_user(self, username: str, password: str):
         c=self.conn.cursor()
         print("fetching password for "+username)
-        c.execute("SELECT password FROM User WHERE Username LIKE ?",[username])
-        password=c.fetchone()
+        c.execute("SELECT id,username,password FROM User WHERE Username LIKE ? AND Password LIKE ?",[username, password])
+        #Should never fetch multiples
+        row=c.fetchone()
         c.close()
-        return password
+        if row is not None:
+            return account(row[0],row[1], row[2])
+        else:
+            return None
 
     def get_log_ids(self, user_id: int):
         c=self.conn.cursor()
@@ -27,10 +62,9 @@ class data:
         c.close()
         return id
 
-    def insert_log(self, owner_id: int, matches: list):
+    def insert_log(self, owner_id: int, matches: list, date: str):
         c=self.conn.cursor()
-        #OWnerID always int, so no chance of injection
-        c.execute("INSERT INTO Log(OwnerID) Values("+str(owner_id)+")")
+        c.execute("INSERT INTO Log(OwnerID, date) Values(?, ?)",[owner_id, date])
 
         self.conn.commit()
         print("log added")

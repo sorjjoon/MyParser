@@ -1,9 +1,6 @@
 import os
 
-#This is an incomplete file reader. It has only the functionality that is required for this project
-#atm this will return true if read line indicates a started round
-def __readline(line: str):
-    return "ApplyEffect {836045448945477}: Deserter Detection" in line
+
 
 
 
@@ -15,7 +12,8 @@ def parse_log(log_name: str):
         with open(path,"r", encoding="iso-8859-1") as f:
             #TODO, if time make file reading work properly
             in_match = False   #true while inside a match, false otherwise
-            i =0
+            
+            i =0 #Used for tracking row number. 
             for line in f:
                 i+=1
                 if in_match:
@@ -24,15 +22,14 @@ def parse_log(log_name: str):
                         rounds.append(0)        #Determines start of round, TODO win/loss prediction
                         
                     elif "ApplyEffect {836045448945477}: Safe Login Immunity {973870949466372}" in line: 
-                        print(i)    
+                            
                         matches.append(rounds)
                         rounds=[]
-                        #print(str(i)+"      "+line)
                         in_match = False                                
 
                 else:
                     if "{3289210509328384}" in line:    #{3289210509328384} is id for Bolster
-                       # print(line)
+                       
                         in_match=True
         return matches
 
@@ -41,7 +38,7 @@ def parse_log(log_name: str):
     finally:
         f.close()
         print("deleting "+path)
-        if os.path.isfile(path) and __name__ != "__main__": #name check for testing
+        if os.path.isfile(path) and __name__ != "__main__": #name check for testing TODO remove name check when testing is done
             os.remove(path)
 
 
