@@ -18,10 +18,10 @@ def parse_log(log_name: str):
                 i+=1
                 if in_match:
                     
-                    if "ApplyEffect {836045448945477}: Deserter Detection {3297813328822272}" in line:     # {836045448945477} is id for  Deserter Detection
+                    if "{836045448945477}: Deserter Detection {3297813328822272}" in line:     # {836045448945477} is id for  ApplyEffecy
                         rounds.append(0)        #Determines start of round, TODO win/loss prediction
                         
-                    elif "ApplyEffect {836045448945477}: Safe Login Immunity {973870949466372}" in line: 
+                    elif "{836045448945477}: Safe Login Immunity {973870949466372}" in line: 
                             
                         matches.append(rounds)
                         rounds=[]

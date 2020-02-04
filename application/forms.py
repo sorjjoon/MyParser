@@ -3,23 +3,12 @@ from flask import render_template, request, url_for
 from wtforms import validators
 from application.reader import parse_log
 
-from application import app, db, uploads
+from application import app, uploads
 
 from wtforms import FileField, StringField, PasswordField
 from flask_uploads import UploadNotAllowed
 from flask_login import login_required
 
-#Puting this here because python imports
-#This class is a placeholder until the match and log objects in Domain are finishd
-class match:
-    def __init__(self,number:int, rounds: tuple):
-        self.number=number
-        self.round1=rounds[0]
-        self.round2=rounds[1]
-        if len(rounds)==2:
-            self.round3=None
-        else:
-            self.round3=rounds[2]
 
 
 def type_check(form, field):
@@ -63,9 +52,7 @@ def upload_log():
             matches.append(match(x,i))
             x+=1
         return render_template("upload.html", form = LogForm(), matches = matches)
-        
-            
-        return render_template("invalid.html")
+                    
     else:
         
         return render_template("upload.html", form = LogForm())

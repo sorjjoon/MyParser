@@ -3,10 +3,12 @@ from flask_login import login_required, current_user
 from application import app, db, uploads
 from application.reader import parse_log
 from application.forms import LogForm
-from application.domain.log import log, match
+from application.database.data import Player, Log, Match, Account
+
 
 @app.route("/")
-def index():    
+def index():
+    Account.query.All()    
     return render_template("index.html")
 
 
@@ -52,7 +54,7 @@ def add_log():
     matches =[]
     #key format is match_number+"round"+round_number (for example 3round2), match_number is irrelevant (just chronoligal order they appeared in log, can be expanded later)
     
-    #len(request.form.keys() always divisiable by 3
+    #len(request.form.keys()-1 always divisiable by 3
     size = len(list(request.form.keys()))-1 #-1 because date
     date = request.form.get("date")
     print(date)

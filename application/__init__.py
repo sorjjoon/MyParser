@@ -1,5 +1,5 @@
 from flask import Flask
-from application.database import data
+#from application.database import data
 from flask_uploads import UploadSet, configure_uploads, TEXT
 import os
 from flask import render_template, request
@@ -13,8 +13,15 @@ configure_uploads(app, uploads)
 app.config['MAX_CONTENT_LENGTH'] = 12 * 1024 * 1024 #limit of 12 mb
 
 #db, uses sqlite atm, can be replaced later if needed
-db = data.data()
-db.create_tables()
+#db = data.data()
+#db.create_tables()
+
+#db
+from flask_sqlalchemy import SQLAlchemy
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config["SQLALCHEMY_ECHO"] = True
+
+db = SQLAlchemy(app)
 
 
 
@@ -34,7 +41,8 @@ login_manager.login_message = "Please login to use this functionality."
 def load_user(user_id):        
     return db.get_user_by_id(user_id)
 
-
+from application.database import data
+db.create_all()
 #views, - imported as views1 because imports cant have the same name (but are never manually used so the name doesn't matter)
 from application.auth import views as views1
 from application import views
