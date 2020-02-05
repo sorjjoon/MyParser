@@ -30,8 +30,10 @@
   <br>
   {% for match in matches %}
   <br>
-  <b>Game {{match.number}}</b>
+  <b>{{match.start_string}} - {{match.end_string}}</b>
   <br>
+  <input type="hidden" id={{ match.number ~ "start" }} name={{ match.number ~ "start" }} value={{match.start}}>
+  <input type="hidden" id={{ match.number ~ "end" }} name={{ match.number ~ "end" }} value={{match.end}}>
   round 1
   <select name={{ match.number ~ "round1" }} required>
     <option value="1">win</option>
@@ -44,15 +46,21 @@
     <option value="1">win</option>
     <option value="0">loss</option>
   </select>
-
   <br>
+  {% if match.round3 is not none %}
+  
   round 3
+  
   <select name={{ match.number ~ "round3" }} required>
     <option value="1">win</option>
     <option value="0">loss</option>
     <option value="2">not played</option>
   </select>
-
+  <br>
+  {% else %}
+  round 3 not played
+  <br>
+  {% endif %}
   <br>
   {% endfor %}
   <input type="submit" value="Submit">

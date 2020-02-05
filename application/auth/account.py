@@ -20,7 +20,9 @@ class account:
         return False
 
     def is_authenticated(self):
-        return True 
+        return True
+    def __str__(self):
+        return str(self.id)+" "+self.name
 
         
 

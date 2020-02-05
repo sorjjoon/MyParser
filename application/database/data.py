@@ -1,202 +1,143 @@
-import sqlite3
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, LargeBinary, Date, Boolean, DateTime, engine
+from sqlalchemy.sql import select, insert, delete, update
 from application.auth.account import account
+from sqlalchemy.types import DateTime, Date, Time
+from application.domain.domain import match, log
+from datetime import date as pydate
+
 class data:
-    #TODO match_player
-    #TODO make everything try - with (leaks)
-    
-    def __init__(self):
-        try:
-            self.conn=sqlite3.connect('data.db', isolation_level=None, check_same_thread=False)
-            self.create_tables()
-            print("connetion successful")
-        except Exception as e:
-            print(e)
+    def __init__(self, used_engine: engine):
+        #Creating tables
+        
+        metadata = MetaData()
+        self.account = Table('Account', metadata,
+        Column("id",Integer, primary_key=True),
+        Column("username",String(150), nullable=False),
+        Column("password",String(150), nullable=False))
+        
+        self.log = Table('Log', metadata,
+        Column("id",Integer, primary_key=True),
+        Column("owner_id",Integer, ForeignKey("Account.id"), nullable=False),
+        Column("log_file",LargeBinary),
+        Column("start_date",Date))
+
+        self.match_player = Table('match_player', metadata,
+        Column("player_id",Integer, ForeignKey("Player.id"), primary_key=True),
+        Column("match_id",Integer, ForeignKey("Match.id"), primary_key=True),
+        Column("side",Boolean, nullable = False))
+
+        self.match = Table('Match', metadata,
+        Column("id",Integer, primary_key=True),
+        Column("round1",Boolean),
+        Column("round2",Boolean),
+        Column("round3",Boolean, default= None),
+        Column("log_id",Integer, ForeignKey("Log.id")),
+        Column("start_time", Time),
+        Column("end_time", Time))
+        
+        self.player = Table('Player', metadata,    
+        Column("name",String(30), nullable = False),
+        Column("id",Integer, primary_key=True))
+        self.engine=used_engine
+        
+        metadata.create_all(used_engine)
+
+
+    def insert_user(self, username: str, password: str):
+        print("Adding new user "+username)
+        sql = self.account.insert().values(username=username, password=password)
+        with self.engine.connect() as conn:
+            conn.execute(sql)
+                
 
     def get_user_by_id(self, user_id: int):
-        c=self.conn.cursor()
-        print("fetching password for "+str(user_id))
-        c.execute("SELECT id,username,password FROM User WHERE id = ?",[user_id])
-        #Should never fetch multiples
-        row=c.fetchone()
-        c.close()
-        if row is not None:
-            return account(row[0],row[1], row[2])
-        else:
-            return None
-        
-    def insert_user(self, username: str, password: str):
-        c=self.conn.cursor()
-        c.execute("SELECT id FROM User WHERE Username LIKE ?",[username])
-        row=c.fetchone()
-        if row is None:
-            c.execute("INSERT INTO User(username, password) VALUES(?, ?) ",[username, password])
-            self.conn.commit()
-        else:
-            raise ValueError("username in use")
-        c.close()
-
-        
-    def update_password(self, user_id: int, new_password: str):
-        c=self.conn.cursor()
-        print("updating password for "+str(user_id))
-        c.execute("UPDATE User SET Password = ? WHERE id = ?",[new_password, user_id])
-        c.close()
-
-
-    def get_user(self, username: str, password: str):
-        c=self.conn.cursor()
-        print("fetching password for "+username)
-        c.execute("SELECT id,username,password FROM User WHERE Username LIKE ? AND Password LIKE ?",[username, password])
-        #Should never fetch multiples
-        row=c.fetchone()
-        c.close()
-        if row is not None:
-            return account(row[0],row[1], row[2])
-        else:
-            return None
-
-    def get_log_ids(self, user_id: int):
-        c=self.conn.cursor()
-        c.execute("SELECT id FROM log WHERE ownerID = ?", [user_id])
-        id = c.fetchall()
-        c.close()
-        return id
-
-    def insert_log(self, owner_id: int, matches: list, date: str):
-        c=self.conn.cursor()
-        c.execute("INSERT INTO Log(OwnerID, date) Values(?, ?)",[owner_id, date])
-
-        self.conn.commit()
-        print("log added")
-        log_id = c.lastrowid
-        c.close()
-        for tuples in matches:
-            if(len(tuples)!=3):
-                raise ValueError('Matches must be represented by a tuple with length 3')
+        sql = select([self.account]).where(self.account.c.id==user_id)
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            row = result_set.fetchone()
+            result_set.close()       
+            if row is not None:
+                return account(row[self.account.c.id],row[self.account.c.username], row[self.account.c.password])
             else:
-                self.__insert_match(log_id,tuples[0],tuples[1],tuples[2])
-                print("match added")
-
-    def update_match(self, match_id: int, wins: tuple):
-        c=self.conn.cursor()
-        if(len(wins)!=3):
-                raise ValueError('Matches must be represented by a tuple with length 3')
-        sql = "UPDATE Match Set Round1 = ? , Round2 = ?, Round3 = ? WHERE id = "+str(match_id)
-        print(sql)
-        wins_list=list(wins)
-        for i in wins_list:
-            bool(i)
-        c.execute(sql, wins_list)
-        c.close()
-
-    def delete_log(self, log_id: int):
-        c=self.conn.cursor()
-        try:
-            #TODO match_player
-            c.execute("DELETE FROM Match WHERE logID ="+str(log_id))
-            c.execute("DELETE FROM Log WHERE id = "+str(log_id))
-            self.conn.commit()
-            print("Deletion successfull")
-            c.close()
-        except Exception as e:
+                return None
             
-            print("Deletion failed")
-            print(e)
-            self.conn.rollback()
-            c.close()
 
+
+    def update_password(self, user_id: int, new_password: str):
+        print("fetching password for "+str(user_id))
+        sql = update([self.account]).values(password=new_password).where(self.account.c.id==user_id)
+        with self.engine.connect() as conn:
+            conn.execute(sql)
+    
+    def get_user(self, username: str, password: str):        
+        sql = select([self.account]).where(self.account.c.username==username).where(self.account.c.password==password)
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            row = result_set.fetchone()
+            result_set.close()
+            if row is not None:
+                print("Login for "+username+" success")
+                return account(row[self.account.c.id],row[self.account.c.username], row[self.account.c.password])
+            else:
+                print("Login for "+username+" failed")
+                return None
+
+
+    def get_logs(self, user_id):
         
-
-    def generate_test_data(self):
-        c=self.conn.cursor()
-        #just a test function so no need to be safe against injection
-        c.execute("INSERT INTO USER(username, password) VALUES('test','test')")
-        for i in range(1,20):
-            c.execute("INSERT INTO PLAYER (name) VALUES ('player"+str(i)+"');" )
-            print("INSERT INTO PLAYER (name) VALUES ('player"+str(i)+"');")
+        sql = select([self.log.c.id,self.log.c.start_date]).where(self.log.c.owner_id==user_id)
+        logs=[]
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            for row in result_set:
+                print("log id")
+                print(row[self.log.c.id])
+                log_id=row[self.log.c.id]
+                matches = self.get_matches([log_id])
+                logs.append(log(log_id, row[self.log.c.start_date], matches = matches))
             
-        self.conn.commit()            
-        c.close
 
-    def get_playerid(self, name: str):
-        c=self.conn.cursor()
-        c.execute("SELECT id FROM PLAYER WHERE name LIKE ?", [name])
-        id = c.fetchall()
-        c.close()
-        return id
+            return logs
+
+
+
+
+    def __insert_match(self, log_id: int, match: match):
+        sql = self.match.insert().values(log_id=log_id, round1=match.round1, round2=match.round2, round3=match.round3, start_time=match.start, end_time = match.end)
+        with self.engine.connect() as conn:
+            result=conn.execute(sql)           
+            return result.inserted_primary_key[0] 
+
+    def insert_log(self, owner_id: int, matches: list, date: str): 
+              
+        sql = self.log.insert().values(owner_id=owner_id, start_date=pydate.fromisoformat(date), log_file = None)
+        with self.engine.connect() as conn:
+            result=conn.execute(sql) 
+            log_id = result.inserted_primary_key[0]
+        
+            for match in matches:
+                self.__insert_match(log_id, match)
+
+    def get_matches(self, log_ids):
+        sql = select([self.match],self.match.c.log_id.in_(log_ids))
+        matches= []
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            print
+            for row in result_set:
+                print(row)
+                matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
+        
+        return matches
+                
 
     
 
-    #TODO timestamps
-    def __insert_match(self, log_id: int, round1: bool, round2: bool, round3: bool):
-        sql = "INSERT INTO match(logID, round1, round2, round3) VALUES(?,?,?,?)"
-        c = self.conn.cursor()
-        c.execute(sql, [log_id, round1, round2, round3])
-        self.conn.commit()
-        id = c.lastrowid
-        c.close
-        return id
+    
         
-    def get_matches(self, log_ids):
-        # adding correct number of ? to string
-        sql = "SELECT round1, round2, round3 FROM match WHERE match.logID in ({s})".format(s=','.join(['?']*len(log_ids)))
-        c = self.conn.cursor()
-        c.execute(sql, log_ids)
-        wins = c.fetchall()
-        c.close()
-        return wins
-
-
-    def create_tables(self):
-        tables ="""
-CREATE TABLE IF NOT EXISTS User (
-       username varchar(20) NOT NULL,
-       password varchar(30) NOT NULL,
-       id INTEGER PRIMARY KEY NOT NULL
-       
-);
-
-
-
-CREATE TABLE IF NOT EXISTS Log (
-       id INTEGER PRIMARY KEY NOT NULL,
-       ownerID int NOT NULL,
-       log BLOB,
-       date DATE,       
-       FOREIGN KEY(ownerID) REFERENCES User(id)
-);
-
-CREATE TABLE IF NOT EXISTS Player (
-       name varchar(20) NOT NULL,
-       id INTEGER PRIMARY KEY NOT NULL
-       
-);
-
-CREATE TABLE IF NOT EXISTS Match (
-       id INTEGER PRIMARY KEY NOT NULL,
-       round1 boolean NOT NULL,
-       round2 boolean NOT NULL,
-       round3 boolean,
-       logID int,
-       timestamp DATETIME, 
-       FOREIGN KEY(logID) REFERENCES log(id)
-            
-);
-
-
-CREATE TABLE IF NOT EXISTS match_player (
-       matchID int,
-       playerID int,
-       side boolean NOT NULL,
-       FOREIGN KEY(matchID) REFERENCES match(id),
-       FOREIGN KEY(playerID) REFERENCES player(id)
-);
-       """
-        c = self.conn.cursor()
         
-        c.executescript(tables)
-        c.close
 
+        
 
 
         
