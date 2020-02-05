@@ -8,3 +8,5 @@ This project in particular deals with the storage of logs, and in particular log
 When the application acually has some functionality beyond the current highly simplistic functions, I'll update this description to be more informative
 
 
+[User stories](/documentation/stories.md)  
+[Database](/documentation/data.png)
