@@ -19,17 +19,6 @@ class LogForm(FlaskForm):
   
 
 
-#This class is a placeholder until the match in Domain is finishd
-class match:
-    def __init__(self,number:int, rounds: tuple):
-        self.number=number
-        self.round1=rounds[0]
-        self.round2=rounds[1]
-        if len(rounds)==2:
-            self.round3=None
-        else:
-            self.round3=rounds[2]
-
 
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
