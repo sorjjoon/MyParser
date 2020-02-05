@@ -1,40 +1,17 @@
-CREATE TABLE IF NOT EXISTS User (
-       username varchar(20) NOT NULL,
-       password varchar(30) NOT NULL,
-       id int NOT NULL,
-       PRIMARY KEY(id)
-);
+SELECT (
+        (SELECT avg(round2)*count(round2) from match WHERE LOG_ID IN(1,2) AND round3 is null)
+        /
+        (SELECT count(*) FROM Match WHERE LOG_ID IN(1,2))
+         + 
+         (SELECT avg(round3)*count(round3) from match WHERE LOG_ID IN(1,2))
+         /
+         (SELECT count(*) FROM Match WHERE LOG_ID IN(1,2)) 
+         
+         ) AS "avg";
+
+     
+SELECT ((SELECT COALESCE(avg(round2),0)*count(round2) from match WHERE LOG_ID IN(1,2) AND round3 is null)/(SELECT count(*) FROM Match WHERE LOG_ID IN(1,2))+ (SELECT COALESCE(avg(round3),0)*count(round3) from match WHERE LOG_ID IN(1,2))/(SELECT count(*) FROM Match WHERE LOG_ID IN(1,2)) ) AS "avg";
 
 
 
-CREATE TABLE IF NOT EXISTS Log (
-       id int NOT NULL,
-       ownerID int NOT NULL,
-       date date NOT NULL,
-       PRIMARY KEY(id),
-       FOREIGN KEY(ownerID) REFERENCES User(id)
-);
-
-CREATE TABLE IF NOT EXISTS Player (
-       name varchar(20) NOT NULL,
-       id int NOT NULL,
-       PRIMARY KEY(id)
-);
-
-CREATE TABLE IF NOT EXISTS Match (
-       id int NOT NULL,
-       round1 boolean,
-       round2 boolean,
-       round3 boolean,
-       timestamp time,
-       PRIMARY KEY(id)
-);
-
-CREATE TABLE IF NOT EXISTS match_player (
-       matchID int NOT NULL,
-       playerID int NOT NULL,
-       side boolean NOT NULL,
-       FOREIGN KEY(matchID) REFERENCES match(id),
-       FOREIGN KEY(playerID) REFERENCES player(id)
-);
-       
+      

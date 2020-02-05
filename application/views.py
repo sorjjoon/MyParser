@@ -6,9 +6,10 @@ from application.forms import LogForm
 from application.domain.domain import match
 from datetime import date as pydate
 from datetime import time as pytime
+from application.database.stats import win_pre
 
 @app.route("/")
-def index():    
+def index():   
     return render_template("index.html")
 
 
@@ -18,10 +19,15 @@ def index():
 @login_required
 def get_matches():
     logs = db.get_logs(current_user.get_id())
+    log_ids=[]
     for log in logs:
-        for match in log.matches:
-            print(match.start)    
-    return render_template("list.html", logs = logs)
+        log_ids.append(log.id)
+    if log_ids:
+        win_prec = round(win_pre(log_ids)*100,2)
+    else:
+        win_prec = 0
+
+    return render_template("list.html", logs = logs, win_pre=win_prec)
 
 
 

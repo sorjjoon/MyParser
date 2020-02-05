@@ -1,6 +1,12 @@
 {% extends "layout.html" %}
 
 {% block body %}
+
+<form action="{{ url_for('login_auth') }}" method="get">
+      <button name="Login" type="submit">Login</button>
+  
+    </form>
+    <br>
 {{ error }}
 <form method="POST" action="{{ url_for('register') }}">
   <table>
@@ -26,4 +32,6 @@
       </td>
     </tr>
 </form>
+
+
 {% endblock %}

@@ -1,5 +1,5 @@
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, LargeBinary, Date, Boolean, DateTime, engine
-from sqlalchemy.sql import select, insert, delete, update
+from sqlalchemy.sql import select, insert, delete, update, desc
 from application.auth.account import account
 from sqlalchemy.types import DateTime, Date, Time
 from application.domain.domain import match, log
@@ -65,7 +65,7 @@ class data:
 
     def update_password(self, user_id: int, new_password: str):
         print("fetching password for "+str(user_id))
-        sql = update([self.account]).values(password=new_password).where(self.account.c.id==user_id)
+        sql = update(self.account).values(password=new_password).where(self.account.c.id==user_id)
         with self.engine.connect() as conn:
             conn.execute(sql)
     
@@ -85,7 +85,7 @@ class data:
 
     def get_logs(self, user_id):
         
-        sql = select([self.log.c.id,self.log.c.start_date]).where(self.log.c.owner_id==user_id)
+        sql = select([self.log.c.id,self.log.c.start_date]).where(self.log.c.owner_id==user_id).order_by(desc(self.log.c.start_date))
         logs=[]
         with self.engine.connect() as conn:
             result_set = conn.execute(sql)

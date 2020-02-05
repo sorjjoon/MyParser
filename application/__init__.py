@@ -24,6 +24,8 @@ database = SQLAlchemy(app)
 
 db = data.data(database.engine)
 
+
+
 #login
 from application.auth import account
 

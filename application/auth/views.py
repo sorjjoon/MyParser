@@ -9,7 +9,7 @@ from application.auth import account
 class PasswordForm(FlaskForm):
     #TODO strip whitespace, make validators work, currently EqualTo is not working
     password1 = PasswordField("New Password", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=30, message="Password must be between 5 and 30 chaecters"), validators.EqualTo("password2", message='Passwords must match')])
-    password2 = PasswordField("Confirm Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=30, message="Password must be between 5 and 30 chaecters")])  #TODO password strength
+    password2 = PasswordField("Confirm Password" )  #Only password1 needs to be validated
     class Meta:
         csrf = False
 
@@ -56,13 +56,21 @@ def update_password():
     if request.method == "GET":
         return render_template("auth/newpass.html", form = PasswordForm())
     #EqaulTo validator doesn't seem to work, so checking that passwords are same here
-    if request.form.get("password1") == request.form.get("password2") and request.form.get("password1") is not None:     
+    #if request.form.get("password1") == request.form.get("password2") and request.form.get("password1") is not None:    
+    form = PasswordForm(request.form)
+    print(form.validate())
+    if form.validate(): 
         new_pass = request.form.get("password1") #Doesn't matter if we use 1 or 2 (since we have validated them to be same)
         db.update_password(current_user.get_id(), new_pass)
         logout_user()
         return redirect(url_for("index"))
         
-    return render_template("auth/newpass.html", form = PasswordForm(), error = "Passwords don't match")
+    else:
+        return render_template("auth/newpass.html", form = PasswordForm())
+        
+        
+        
+    #return render_template("auth/newpass.html", form = PasswordForm(), error = "Passwords don't match")
 
 
 
