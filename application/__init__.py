@@ -6,6 +6,8 @@ from flask import render_template, request
 
 app = Flask(__name__)
 
+
+
 #uploads
 uploads = UploadSet("logs", TEXT)
 app.config["UPLOADED_LOGS_DEST"] =os.getcwd()+"/uploads"
@@ -18,10 +20,7 @@ app.config['MAX_CONTENT_LENGTH'] = 12 * 1024 * 1024 #limit of 12 mb
 from flask_sqlalchemy import SQLAlchemy
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_ECHO"] = True
-
 database = SQLAlchemy(app)
-
-
 db = data.data(database.engine)
 
 
@@ -37,6 +36,11 @@ login_manager.init_app(app)
 
 login_manager.login_view = "login_auth"
 login_manager.login_message = "Please login to use this functionality."
+
+#session manager
+import redis
+
+
 
 @login_manager.user_loader
 def load_user(user_id):        

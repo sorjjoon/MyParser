@@ -47,7 +47,7 @@ def parse_log(log_name: str):
                 if in_match:
 
                     row_object = read_row(row)
-                    print(row_object)
+                   
                     if "Deserter Detection {3297813328822272}" in row_object.details:     
                         rounds.append(0)        #Determines start of round, TODO win/loss prediction
                         

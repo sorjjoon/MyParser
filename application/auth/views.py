@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session
 from flask_wtf import FlaskForm
 from application import db, app
 from wtforms import  StringField, PasswordField, validators, ValidationError
@@ -53,7 +53,7 @@ def login_auth():
         return render_template("auth/login.html", form = form, error = "No such username or password")
 
     login_user(user)
-
+    session['test'] = "moi"
     print("User " + form.username.data+ " validated")
     return redirect(url_for("index"))
 
@@ -61,6 +61,7 @@ def login_auth():
 @app.route("/user", methods=["GET","POST"])
 @login_required
 def update_password():
+    
     if request.method == "GET":
         return render_template("auth/newpass.html", form = PasswordForm())
     #EqaulTo validator doesn't seem to work, so checking that passwords are same here

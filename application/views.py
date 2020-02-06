@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from application import app, db, uploads
 from application.reader import parse_log
@@ -18,7 +18,9 @@ def index():
 @app.route("/list", methods=["GET"])
 @login_required
 def get_matches():
+    
     logs = db.get_logs(current_user.get_id())
+    
     log_ids=[]
     for log in logs:
         log_ids.append(log.id)
@@ -39,12 +41,17 @@ def add_log():
         return redirect(url_for("index"))
     matches =[]
 
-    size = int(request.form.get("size")) 
+    size = session["log_size"]
+    session.pop("log_size")
     date = request.form.get("date")
-    print(size)
-    print(request.form) 
+    
     for match_number in range(1,size+1):
-        print(match_number)
+        team = session["match"+str(match_number)+"_team"]
+        opponent = session["match"+str(match_number)+"_opponent"]
+        session.pop("match"+str(match_number)+"_team")
+        session.pop("match"+str(match_number)+"_opponent")
+        print(team)
+        print(opponent)
         round1=bool(int(request.form.get(str(match_number)+"round1")))
         
         round2=bool(int(request.form.get(str(match_number)+"round2")))
@@ -53,11 +60,10 @@ def add_log():
             round3=None
         else:
             round3=bool(int(request.form.get(str(match_number)+"round3")))
-
-        print(request.form.get(str(match_number)+"start"))
+        
         start_time = pytime.fromisoformat(request.form.get(str(match_number)+"start"))
         end_time= pytime.fromisoformat(request.form.get(str(match_number)+"end"))
-        matches.append(match(start_time,end_time,round1, round2, round3, [], []))
+        matches.append(match(start_time, end_time, round1, round2, round3, team, opponent))
 
     db.insert_log(current_user.get_id(),matches,date)
 

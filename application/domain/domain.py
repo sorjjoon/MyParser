@@ -30,6 +30,11 @@ class match():
         self.end_string=str(end)[:-10]
         self.number=number
 
+    def set_rounds(self, round1, round2, round3=None):
+        self.round1=round1
+        self.round2=round2
+        self.round3=round3
+
 
 
 

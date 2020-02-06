@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, session
 from wtforms import validators
 from application.reader import parse_log
 
@@ -38,9 +38,12 @@ def upload_log():
         if not matches:
             print("non valid text file")
             return render_template("upload.html", form = LogForm(), error = "Upload a valid file")
-
-        print(matches[0].team)
-        print(matches[0].opponent)
+        number = 1
+        session["log_size"]=len(matches)
+        for match in matches:
+            session["match"+str(number)+"_team"]=match.team
+            session["match"+str(number)+"_opponent"]=match.opponent
+            number+=1
         return render_template("upload.html", form = LogForm(), matches = matches, size = len(matches))
     else:
         

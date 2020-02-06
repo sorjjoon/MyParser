@@ -131,11 +131,11 @@ class data:
             match_id= result.inserted_primary_key[0]
             #TODO make this with insert in bulk
             for player in match.team:
-                player_id = get_player_id(player)
+                player_id = self.get_player_id(player)
                 sql = self.match_player.insert().values(player_id=player_id,match_id = match_id, side=1)
                 conn.execute(sql)
             for player in match.opponent:
-                player_id = get_player_id(player)
+                player_id = self.get_player_id(player)
                 sql = self.match_player.insert().values(player_id=player_id,match_id = match_id, side=0)
                 conn.execute(sql)
         return match_id 
@@ -158,7 +158,7 @@ class data:
             print
             for row in result_set:
                 print(row)
-                matches.append(match(row[elf.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
+                matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
         
         return matches
                 
