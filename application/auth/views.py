@@ -1,21 +1,27 @@
 from flask import render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
 from application import db, app
-from wtforms import  StringField, PasswordField, validators
+from wtforms import  StringField, PasswordField, validators, ValidationError
 
 from flask_login import login_user, logout_user, login_required, current_user
 from application.auth import account
 #forms
+def username_free(form, field):
+    if not db.check_user(field.data):
+        raise ValidationError('Username in use')
 class PasswordForm(FlaskForm):
-    #TODO strip whitespace, make validators work, currently EqualTo is not working
-    password1 = PasswordField("New Password", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=30, message="Password must be between 5 and 30 chaecters"), validators.EqualTo("password2", message='Passwords must match')])
+    password1 = PasswordField("New Password", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=30, message="Password must be between 5 and 30 characters"), validators.EqualTo("password2", message='Passwords must match')])
     password2 = PasswordField("Confirm Password" )  #Only password1 needs to be validated
     class Meta:
         csrf = False
+        
+class RegisterForm(FlaskForm):
+    username = StringField("Username", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=20, message="Username must be between 5 and 30 characters"),username_free])
+    password = PasswordField("Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=30, message="Password must be between 5 and 30 characters")])  #TODO password strength
+    class Meta:
+        csrf = False
 
-##TODO validate (length)
-class LoginForm(FlaskForm):
-    #TODO strip whitespace
+class LoginForm(FlaskForm):    
     username = StringField("Username", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=20, message="Username must be between 5 and 30 characters")])
     password = PasswordField("Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=30, message="Password must be between 5 and 30 characters")])  #TODO password strength
     class Meta:
@@ -24,13 +30,15 @@ class LoginForm(FlaskForm):
 @app.route("/auth/register", methods = ["GET", "POST"])
 def register():
     if request.method =="GET":
-        return render_template("auth/register.html", form = LoginForm())
-    form = LoginForm(request.form)
+        return render_template("auth/register.html", form = RegisterForm())
+    form = RegisterForm(request.form)
+    if not form.validate():
+        return render_template("auth/register.html", form = form)
     try:
         db.insert_user(form.username.data, form.password.data)
         return redirect(url_for("index"))
     except ValueError:
-        return render_template("auth/register.html", form = LoginForm(), error = "Username in use")
+        return render_template("auth/register.html", form = RegisterForm(), error = "Username in use")
 
 @app.route("/auth/login", methods = ["GET", "POST"])
 def login_auth():
@@ -66,7 +74,7 @@ def update_password():
         return redirect(url_for("index"))
         
     else:
-        return render_template("auth/newpass.html", form = PasswordForm())
+        return render_template("auth/newpass.html", form = form)
         
         
         

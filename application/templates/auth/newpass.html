@@ -11,10 +11,15 @@
       <td>
 	{{ form.password1 }}
       </td>
+      <td>
+            <ul>
+              {% for error in form.password1.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
     </tr>
-    {% for error in form.password1.errors %}
-	    <li>{{ error }}</li>
-	    {% endfor %}
+    
     <tr>
       <td>
 	{{ form.password2.label }}
@@ -22,6 +27,7 @@
       <td>
 	{{ form.password2 }}
       </td>
+      
     </tr>
     <tr>
       <td colspan="2">

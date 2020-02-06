@@ -90,8 +90,7 @@ class data:
         with self.engine.connect() as conn:
             result_set = conn.execute(sql)
             for row in result_set:
-                print("log id")
-                print(row[self.log.c.id])
+               
                 log_id=row[self.log.c.id]
                 matches = self.get_matches([log_id])
                 logs.append(log(log_id, row[self.log.c.start_date], matches = matches))
@@ -100,16 +99,49 @@ class data:
             return logs
 
 
+    def check_user(self, username):
+        sql = select([self.account]).where(self.account.c.username==username)
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            row = result_set.fetchone()
+            result_set.close()
+            if row is None:
+                return True
+            else:
+                return False
 
+    def get_player_id(self, player_name):
+        sql = select([self.player]).where(self.player.c.name==player_name)
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            row = result_set.fetchone()
+            result_set.close()
+            if row is None:
+                sql = self.player.insert().values(name=player_name)
+                result = conn.execute(sql)
+                return result.inserted_primary_key[0]
+            else:
+                return row[self.player.c.id]
+                
 
     def __insert_match(self, log_id: int, match: match):
         sql = self.match.insert().values(log_id=log_id, round1=match.round1, round2=match.round2, round3=match.round3, start_time=match.start, end_time = match.end)
         with self.engine.connect() as conn:
-            result=conn.execute(sql)           
-            return result.inserted_primary_key[0] 
+            result=conn.execute(sql)
+            match_id= result.inserted_primary_key[0]
+            #TODO make this with insert in bulk
+            for player in match.team:
+                player_id = get_player_id(player)
+                sql = self.match_player.insert().values(player_id=player_id,match_id = match_id, side=1)
+                conn.execute(sql)
+            for player in match.opponent:
+                player_id = get_player_id(player)
+                sql = self.match_player.insert().values(player_id=player_id,match_id = match_id, side=0)
+                conn.execute(sql)
+        return match_id 
 
     def insert_log(self, owner_id: int, matches: list, date: str): 
-              
+                      
         sql = self.log.insert().values(owner_id=owner_id, start_date=pydate.fromisoformat(date), log_file = None)
         with self.engine.connect() as conn:
             result=conn.execute(sql) 
@@ -126,7 +158,7 @@ class data:
             print
             for row in result_set:
                 print(row)
-                matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
+                matches.append(match(row[elf.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
         
         return matches
                 

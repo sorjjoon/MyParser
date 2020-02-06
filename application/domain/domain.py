@@ -31,7 +31,5 @@ class match():
         self.number=number
 
 
-if __name__ == "__main__":
-    x= log(datetime.datetime(2000,1,10), [])
 
 

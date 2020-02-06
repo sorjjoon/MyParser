@@ -39,8 +39,9 @@ def upload_log():
             print("non valid text file")
             return render_template("upload.html", form = LogForm(), error = "Upload a valid file")
 
-        
-        return render_template("upload.html", form = LogForm(), matches = matches)
+        print(matches[0].team)
+        print(matches[0].opponent)
+        return render_template("upload.html", form = LogForm(), matches = matches, size = len(matches))
     else:
         
         return render_template("upload.html", form = LogForm())

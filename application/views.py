@@ -38,15 +38,13 @@ def add_log():
     if request.method == "GET":
         return redirect(url_for("index"))
     matches =[]
-    #key format is match_number+"round"+round_number (for example 3round2), match_number is irrelevant (just chronoligal order they appeared in log, can be expanded later)
-    
-    #len(request.form.keys() always divisiable by 5
-    size = len(list(request.form.keys()))-1 #-1 because date
+
+    size = int(request.form.get("size")) 
     date = request.form.get("date")
-    print(date)
-    print(type(date))
-    print(request.form)
-    for match_number in range(1,int(size/5)+1):
+    print(size)
+    print(request.form) 
+    for match_number in range(1,size+1):
+        print(match_number)
         round1=bool(int(request.form.get(str(match_number)+"round1")))
         
         round2=bool(int(request.form.get(str(match_number)+"round2")))
