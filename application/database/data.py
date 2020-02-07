@@ -17,13 +17,13 @@ class data:
         
         self.log = Table('log', metadata,
         Column("id",Integer, primary_key=True),
-        Column("owner_id",Integer, ForeignKey("Account.id"), nullable=False),
+        Column("owner_id",Integer, ForeignKey("account.id"), nullable=False),
         Column("log_file",LargeBinary),
         Column("start_date",Date))
 
         self.match_player = Table('match_player', metadata,
-        Column("player_id",Integer, ForeignKey("Player.id"), primary_key=True),
-        Column("match_id",Integer, ForeignKey("Match.id"), primary_key=True),
+        Column("player_id",Integer, ForeignKey("player.id"), primary_key=True),
+        Column("match_id",Integer, ForeignKey("match.id"), primary_key=True),
         Column("side",Boolean, nullable = False))
 
         self.match = Table('match', metadata,
@@ -31,7 +31,7 @@ class data:
         Column("round1",Boolean),
         Column("round2",Boolean),
         Column("round3",Boolean, default= None),
-        Column("log_id",Integer, ForeignKey("Log.id")),
+        Column("log_id",Integer, ForeignKey("log.id")),
         Column("start_time", Time),
         Column("end_time", Time))
         
