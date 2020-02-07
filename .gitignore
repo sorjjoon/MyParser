@@ -3,6 +3,7 @@
 __pycache__
 data.db
 *.txt
+!runtime.txt
 !/documentation
 !requirements.txt
 procfile
