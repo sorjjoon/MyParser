@@ -23,6 +23,7 @@ if os.environ.get("HEROKU"):
 else:
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
     app.config["SQLALCHEMY_ECHO"] = True
+    
 database = SQLAlchemy(app)
 db = data.data(database.engine)
 

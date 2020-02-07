@@ -10,12 +10,12 @@ class data:
         #Creating tables, TODO cascading for log_id and match_id
         
         metadata = MetaData()
-        self.account = Table('Account', metadata,
+        self.account = Table('account', metadata,
         Column("id",Integer, primary_key=True),
         Column("username",String(150), nullable=False),
         Column("password",String(150), nullable=False))
         
-        self.log = Table('Log', metadata,
+        self.log = Table('log', metadata,
         Column("id",Integer, primary_key=True),
         Column("owner_id",Integer, ForeignKey("Account.id"), nullable=False),
         Column("log_file",LargeBinary),
@@ -26,7 +26,7 @@ class data:
         Column("match_id",Integer, ForeignKey("Match.id"), primary_key=True),
         Column("side",Boolean, nullable = False))
 
-        self.match = Table('Match', metadata,
+        self.match = Table('match', metadata,
         Column("id",Integer, primary_key=True),
         Column("round1",Boolean),
         Column("round2",Boolean),
@@ -35,11 +35,10 @@ class data:
         Column("start_time", Time),
         Column("end_time", Time))
         
-        self.player = Table('Player', metadata,    
+        self.player = Table('player', metadata,    
         Column("name",String(30), nullable = False),
         Column("id",Integer, primary_key=True))
         self.engine=used_engine
-
         metadata.create_all(used_engine) #checks if table exsists first
 
 
