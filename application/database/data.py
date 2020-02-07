@@ -7,7 +7,7 @@ from datetime import date as pydate
 
 class data:
     def __init__(self, used_engine: engine):
-        #Creating tables
+        #Creating tables, TODO cascading for log_id and match_id
         
         metadata = MetaData()
         self.account = Table('Account', metadata,
@@ -39,8 +39,8 @@ class data:
         Column("name",String(30), nullable = False),
         Column("id",Integer, primary_key=True))
         self.engine=used_engine
-        
-        metadata.create_all(used_engine)
+
+        metadata.create_all(used_engine) #checks if table exsists first
 
 
     def insert_user(self, username: str, password: str):
@@ -167,7 +167,7 @@ class data:
             result_set = conn.execute(sql)
             
             for row in result_set:
-                print(row)
+                
                 matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
         
         return matches

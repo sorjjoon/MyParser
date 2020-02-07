@@ -29,6 +29,8 @@ class match():
         self.start_string=str(start)[:-10]
         self.end_string=str(end)[:-10]
         self.number=number
+        self.team_string=str(self.team)[:-1][1:]
+        self.opponent_string=str(self.opponent)[:-1][1:]
 
     def set_rounds(self, round1, round2, round3=None):
         self.round1=round1

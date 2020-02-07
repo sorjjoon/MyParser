@@ -35,6 +35,10 @@
   <br>
   <b>{{match.start_string}} - {{match.end_string}}</b>
   <br>
+  Team : {{match.team_string}}
+  <br>
+  Enemy Team : {{match.opponent_string}}
+  <br>
   <input type="hidden" id={{ match.number ~ "start" }} name={{ match.number ~ "start" }} value={{match.start}}>
   <input type="hidden" id={{ match.number ~ "end" }} name={{ match.number ~ "end" }} value={{match.end}}>
   round 1
@@ -57,7 +61,6 @@
   <select name={{ match.number ~ "round3" }} required>
     <option value="1">win</option>
     <option value="0">loss</option>
-    <option value="2">not played</option>
   </select>
   <br>
   {% else %}

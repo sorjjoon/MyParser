@@ -18,8 +18,11 @@ app.config['MAX_CONTENT_LENGTH'] = 12 * 1024 * 1024 #limit of 12 mb
 #db, uses sqlite atm, can be replaced later if needed
 
 from flask_sqlalchemy import SQLAlchemy
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
-app.config["SQLALCHEMY_ECHO"] = True
+if os.environ.get("HEROKU"):
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+    app.config["SQLALCHEMY_ECHO"] = True
 database = SQLAlchemy(app)
 db = data.data(database.engine)
 

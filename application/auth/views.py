@@ -67,7 +67,7 @@ def update_password():
     #EqaulTo validator doesn't seem to work, so checking that passwords are same here
     #if request.form.get("password1") == request.form.get("password2") and request.form.get("password1") is not None:    
     form = PasswordForm(request.form)
-    print(form.validate())
+    
     if form.validate(): 
         new_pass = request.form.get("password1") #Doesn't matter if we use 1 or 2 (since we have validated them to be same)
         db.update_password(current_user.get_id(), new_pass)

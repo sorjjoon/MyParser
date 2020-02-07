@@ -34,7 +34,7 @@ def get_matches():
 
 
 
-
+#TODO validation
 @app.route("/newlog", methods=["POST", "GET"])
 @login_required
 def add_log():
@@ -47,12 +47,12 @@ def add_log():
     date = request.form.get("date")
     
     for match_number in range(1,size+1):
+        
         team = session["match"+str(match_number)+"_team"]
         opponent = session["match"+str(match_number)+"_opponent"]
         session.pop("match"+str(match_number)+"_team")
         session.pop("match"+str(match_number)+"_opponent")
-        print(team)
-        print(opponent)
+
         round1=bool(int(request.form.get(str(match_number)+"round1")))
         
         round2=bool(int(request.form.get(str(match_number)+"round2")))
