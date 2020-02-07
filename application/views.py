@@ -6,7 +6,7 @@ from application.forms import LogForm
 from application.domain.domain import match
 from datetime import date as pydate
 from datetime import time as pytime
-from application.database.stats import win_pre
+from application.database.stats import win_pre, player_count
 
 @app.route("/")
 def index():   
@@ -28,8 +28,9 @@ def get_matches():
         win_prec = round(win_pre(log_ids)*100,2)
     else:
         win_prec = 0
+    player_counts = player_count(log_ids)
 
-    return render_template("list.html", logs = logs, win_pre=win_prec)
+    return render_template("list.html", logs = logs, win_pre=win_prec, players = player_counts)
 
 
 

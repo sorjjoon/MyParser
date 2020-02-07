@@ -150,12 +150,22 @@ class data:
             for match in matches:
                 self.__insert_match(log_id, match)
 
+    def get_match_ids(self, log_ids):
+        sql = select([self.match.c.id],self.match.c.log_id.in_(log_ids))
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            matches=[]
+            for row in result_set:
+                matches.append(row[self.match.c.id])
+        return matches
+        
+
     def get_matches(self, log_ids):
         sql = select([self.match],self.match.c.log_id.in_(log_ids))
         matches= []
         with self.engine.connect() as conn:
             result_set = conn.execute(sql)
-            print
+            
             for row in result_set:
                 print(row)
                 matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
