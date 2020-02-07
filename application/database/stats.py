@@ -30,7 +30,7 @@ def player_count(log_ids: List[int]):
     #Can't be injected since the list we are using has only ints, hence why we are usinc concenation (the real reason is sqlite doesn't support passing list as param)
     sql = """SELECT COUNT(case match_player.side when 1 then 1 else null end) as player_side, COUNT(case match_player.side when 0 then 1 else null end) as player_against, player.name FROM match_player
             JOIN player ON player.id = match_player.player_id
-            WHERE match_player.match_id IN """+ids+" GROUP BY player_id ORDER BY (player_side+player_against) DESC;" 
+            WHERE match_player.match_id IN """+ids+" GROUP BY player_name ORDER BY player_side DESC;" 
     results = []
     with db.engine.connect() as conn:        
         result_set=conn.execute(text(sql))
