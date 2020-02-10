@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<p>
+
+    Win precentage
+    <br>
+    {{win_pre}} % 
+    <br>
+    Times player played with certain players
+
+    <table class="table">
+        <thead>
+          <tr>
+            <!-- <th scope="col">#</th> -->
+            
+            <th scope="col">Name</th>
+            <th scope="col">With</th>
+            <th scope="col">Against</th>
+          </tr>
+        </thead>
+        <tbody>
+            {%for player in players%}
+          <tr>
+            <!-- <th scope="row">{{ loop.index }}</th> -->
+            <td>{{player.0}}</td>
+            <td>{{player.1}}</td>
+            <td>{{player.2}}</td>
+          </tr>
+          
+            
+          {% endfor %}
+        </tbody>
+        
+      </table>
+</p>
+{% endblock %}

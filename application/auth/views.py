@@ -53,7 +53,6 @@ def login_auth():
         return render_template("auth/login.html", form = form, error = "No such username or password")
 
     login_user(user)
-    session['test'] = "moi"
     print("User " + form.username.data+ " validated")
     return redirect(url_for("index"))
 

@@ -2,7 +2,6 @@ from flask import render_template, request, url_for, redirect, session
 from flask_login import login_required, current_user
 from application import app, db, uploads
 from application.reader import parse_log
-from application.forms import LogForm
 from application.domain.domain import match
 from datetime import date as pydate
 from datetime import time as pytime
@@ -13,14 +12,31 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/delete/<log_id>/", methods=["POST", "GET"])
+def delete_log(log_id):
+    if request.method =="GET":
+        return redirect(url_for("index"))
 
+    print("deleting log "+str(log_id))
+
+    db.delete_log(log_id, current_user.get_id())
+    return redirect(url_for("get_matches"))
 
 @app.route("/list", methods=["GET"])
 @login_required
 def get_matches():
+    logs = db.get_logs(current_user.get_id())        
+    return render_template("list.html", logs = logs)
+
+
+
     
-    logs = db.get_logs(current_user.get_id())
-    
+
+
+@app.route("/stats", methods =["GET"])
+@login_required
+def stats():
+    logs = db.get_logs(current_user.get_id())        
     log_ids=[]
     for log in logs:
         log_ids.append(log.id)
@@ -29,10 +45,7 @@ def get_matches():
     else:
         win_prec = 0
     player_counts = player_count(log_ids)
-
-    return render_template("list.html", logs = logs, win_pre=win_prec, players = player_counts)
-
-
+    return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts)
 
 #TODO validation
 @app.route("/newlog", methods=["POST", "GET"])

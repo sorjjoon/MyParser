@@ -16,14 +16,14 @@ class data:
         Column("password",String(150), nullable=False))
         
         self.log = Table('Log', metadata,
-        Column("id",Integer, primary_key=True),
-        Column("owner_id",Integer, ForeignKey("Account.id"), nullable=False),
+        Column("id",Integer, primary_key=True, ),
+        Column("owner_id",Integer, ForeignKey("Account.id", ondelete="CASCADE"), nullable=False),
         Column("log_file",LargeBinary),
         Column("start_date",Date))
 
         self.match_player = Table('match_player', metadata,
-        Column("player_id",Integer, ForeignKey("Player.id"), primary_key=True),
-        Column("match_id",Integer, ForeignKey("Match.id"), primary_key=True),
+        Column("player_id",Integer, ForeignKey("Player.id", onupdate="CASCADE"), primary_key=True),
+        Column("match_id",Integer, ForeignKey("Match.id", ondelete="CASCADE"), primary_key=True),
         Column("side",Boolean, nullable = False))
 
         self.match = Table('Match', metadata,
@@ -31,7 +31,7 @@ class data:
         Column("round1",Boolean),
         Column("round2",Boolean),
         Column("round3",Boolean, default= None),
-        Column("log_id",Integer, ForeignKey("Log.id")),
+        Column("log_id", Integer, ForeignKey("Log.id", ondelete="CASCADE")),
         Column("start_time", Time),
         Column("end_time", Time))
         
@@ -42,6 +42,12 @@ class data:
 
         metadata.create_all(used_engine) #checks if table exsists first
 
+    def delete_log(self, log_id:int, user_id: int):
+        #Check user owns the log he is trying to delete
+        sql = self.log.delete().where((self.log.c.id == log_id) & (self.log.c.owner_id == user_id))
+        # delete cascades to match and match_player
+        with self.engine.connect() as conn:
+            conn.execute(sql)
 
     def insert_user(self, username: str, password: str):
         print("Adding new user "+username)
