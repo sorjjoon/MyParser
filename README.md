@@ -9,4 +9,5 @@ This project in particular deals with the storage of logs, and in particular log
 
 
 [User stories](/documentation/stories.md)  
-[Database](/documentation/data.png)
+[Database](/documentation/data.png)  
+[Example logs for testing](/documentation/Example-logs)
