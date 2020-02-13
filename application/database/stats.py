@@ -17,7 +17,7 @@ def win_pre(log_ids: List[int]):
         return 0
     if os.environ.get("HEROKU"):
     #diffrent versions for postgre and lite (avg(boolean) not supported in postgre (must be cast to int first))
-        sql = "SELECT (((SELECT COALESCE(avg(round2::int),0)*count(round2) from match WHERE LOG_ID IN "+ids+" AND round3 is null)+(SELECT COALESCE(avg(round3::int),0)*count(round3::int) from match WHERE LOG_ID IN "+ids+"))/(SELECT count(*) FROM Match WHERE LOG_ID IN"+ids+") ) AS 'avg';"
+        sql = "SELECT (((SELECT COALESCE(avg(round2::int),0)*count(round2) from match WHERE LOG_ID IN "+ids+" AND round3 is null)+(SELECT COALESCE(avg(round3::int),0)*count(round3::int) from match WHERE LOG_ID IN "+ids+"))/(SELECT count(*) FROM Match WHERE LOG_ID IN"+ids+") ) AS avg;"
     else:
         sql = "SELECT ((SELECT COALESCE(avg(round2),0)*count(round2) from match WHERE LOG_ID IN "+ids+" AND round3 is null)/(SELECT count(*) FROM Match WHERE LOG_ID IN "+ids+") + (SELECT COALESCE(avg(round3),0)*count(round3) from match WHERE LOG_ID IN "+ids+")/(SELECT count(*) FROM Match WHERE LOG_ID IN "+ids+") ) AS 'avg' ; "
 
