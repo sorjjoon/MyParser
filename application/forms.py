@@ -4,7 +4,7 @@ from wtforms import validators
 
 from application import app, db, uploads
 
-from wtforms import FileField, StringField, PasswordField, SelectField
+from wtforms import FileField, StringField, PasswordField, SelectField, FieldList, FormField
 from flask_uploads import UploadNotAllowed
 from flask_login import login_required, current_user
 
@@ -17,13 +17,16 @@ from datetime import time as pytime
 class UpdateChar(FlaskForm):
     server = SelectField(u'Server', choices=[('Star Forge', 'Star Forge'), ('Satele Shan', 'Satele Shan'), ('Tulak Hord', 'Tulak Hord'), ('Darth Malgus', 'Darth Malgus'), ('The Leviathan', 'The Leviathan')])
     char_class = SelectField(u"Class", choices=[("Mercenary","Mercenary"),("Powertech","Powertech"),("Assassin","Assassin"),("Sorcerer","Sorcerer"),("Operative","Operative"),("Sniper","Sniper"),("Marauder","Marauder"),("Juggernaut","Juggernaut")])
-
+    class Meta:
+        csrf = False
 
 class UploadForm(FlaskForm):
     log = FileField("log")
     
     class Meta:
         csrf = False
+
+
 
 
 @app.route("/update/char", methods=["GET"])
@@ -57,20 +60,25 @@ def add_log():
         return redirect(url_for("index"))
     matches =[]
 
+    #session popping after validations
+    things_to_pop=[]
     size = session["log_size"]
-    session.pop("log_size")
+    
 
     player = session["player"]
-    session.pop("player")
+
+    things_to_pop.append("log_size")
+    things_to_pop.append("player")
 
     date = request.form.get("date")
-    
+    print(request.form)
+    errors = False #changed to true if one of the inputs fails to validate
     for match_number in range(1,size+1):
         
         team = session["match"+str(match_number)+"_team"]
         opponent = session["match"+str(match_number)+"_opponent"]
-        session.pop("match"+str(match_number)+"_team")
-        session.pop("match"+str(match_number)+"_opponent")
+        things_to_pop.append("match"+str(match_number)+"_team")
+        things_to_pop.append("match"+str(match_number)+"_opponent")
         
         round1=bool(int(request.form.get(str(match_number)+"round1")))
         
@@ -83,11 +91,20 @@ def add_log():
         
         start_time = pytime.fromisoformat(request.form.get(str(match_number)+"start"))
         end_time= pytime.fromisoformat(request.form.get(str(match_number)+"end"))
-        matches.append(match(start_time, end_time, round1, round2, round3, team, opponent))
+        note = request.form.get(str(match_number)+"note")
+        new_match = match(start_time, end_time, round1, round2, round3, team, opponent, number=match_number, note=note)
+        if not new_match.validate():
+            errors = True
+        matches.append(new_match)
 
-    db.insert_log(current_user.get_id(),matches,date, player)
+    if not errors:
+        for thing in things_to_pop:
+            session.pop(thing)
 
-    return redirect(url_for("index"))
+        db.insert_log(current_user.get_id(),matches,date, player)
+        return redirect(url_for("index"))
+    else:
+        return render_template("upload.html", form = UploadForm(), matches = matches, size = len(matches), player=player)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -110,10 +127,13 @@ def upload_log():
         number = 1
         session["log_size"]=len(matches)
         for match in matches:
+            match_dict = {}
             session["match"+str(number)+"_team"]=match.team
             session["match"+str(number)+"_opponent"]=match.opponent
             session["player"] = player
             number+=1
+        
+        
         return render_template("upload.html", form = UploadForm(), matches = matches, size = len(matches), player=player)
     else:
         

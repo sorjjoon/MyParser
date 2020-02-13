@@ -10,4 +10,7 @@ This project in particular deals with the storage of logs, and in particular log
 
 [User stories](/documentation/stories.md)  
 [Database](/documentation/data.png)  
-[Example logs for testing](/documentation/Example-logs)
+[Example logs for testing](/documentation/Example-logs)  
+Example logs are split into two folders, based on which character they are for (for creating multiple characters)  
+You can easily create logs for new characters by editing a log to replace all mentions of the char name with something else  
+(eaisest to do for char 2, find and replace "Firaksian" with "Something", just make sure "something" is less than 30 letters)

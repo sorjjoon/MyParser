@@ -42,8 +42,8 @@ def get_defaults():
     return chars
 
     
-def generate_view(selected_chars = None, date_range=None, servers= None):
-    logs = db.get_logs(current_user.get_id(), chars=selected_chars, date_range=date_range, servers=servers)        
+def generate_view(selected_chars = None, date_range=None, servers= None, my_class=None):
+    logs = db.get_logs(current_user.get_id(), chars=selected_chars, date_range=date_range, servers=servers, player_class=my_class)        
     log_ids=[]
     total = 0
     chars = get_defaults()
@@ -108,7 +108,7 @@ def stats():
             logs, win_prec, player_counts, total, chars = generate_view()  
             return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts, total=total, chars = chars, form = form)
             
-
+        my_classes=request.form.getlist("my_class_select")
         selected_chars = request.form.getlist("char_select")
         servers = request.form.getlist("server_select")
         range = None
@@ -120,7 +120,8 @@ def stats():
         print(servers)
         print("chars")
         print(selected_chars)
-        logs, win_prec, player_counts, total, chars = generate_view(selected_chars=selected_chars, date_range= range, servers = servers)
+        print(my_classes)
+        logs, win_prec, player_counts, total, chars = generate_view(selected_chars=selected_chars, date_range= range, servers = servers,my_class=my_classes)
         
                 
         return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts, total=total, chars=chars, form = form)

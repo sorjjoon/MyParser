@@ -1,82 +1,154 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form method="POST" action="{{ url_for('upload_log') }}" enctype="multipart/form-data" >
-  <table>
-    <tr>
+<div class="container pb-3">
+  <form method="POST" action="{{ url_for('upload_log') }}" enctype="multipart/form-data">
+    <table>
+      <tr>
 
-      <td>
-        {{ form.log }}
-      </td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <input type="submit" value="Upload Log" />
-      </td>
+        <td>
+          {{ form.log }}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <input type="submit" value="Upload Log" />
+        </td>
 
-    </tr>
+      </tr>
 
   </form>
-    {% if matches is defined %}
+</div>
 
-<br>
+{% if matches is defined %}
+
 
 <form method="POST" action="/newlog">
   <!-- TODO make this more user friendly -->
   <!-- TODO validate input (round 3 can only be played if round1 != round2) -->
-  Date
-  <br>
-  <input type="date" name="date" required>
-  <br>
-  {% for match in matches %}
-  <br>
-  <b>{{match.start_string}} - {{match.end_string}}</b>
-  <br>
-  Character : {{player}}
-  <br>
-  Team : {{match.team_string}}
-  <br>
-  Enemy Team : {{match.opponent_string}}
-  <br>
-  <input type="hidden" id={{ match.number ~ "start" }} name={{ match.number ~ "start" }} value={{match.start}}>
-  <input type="hidden" id={{ match.number ~ "end" }} name={{ match.number ~ "end" }} value={{match.end}}>
-  round 1
-  <select name={{ match.number ~ "round1" }} required>
-    <option value="1">win</option>
-    <option value="0">loss</option>
-  </select>
+  <table class=".table-borderless mt-3">
+    <tbody>
+      <thead>
 
-  <br>
-  round 2
-  <select name= {{ match.number ~ "round2" }} required>
-    <option value="1">win</option>
-    <option value="0">loss</option>
-  </select>
-  <br>
-  {% if match.round3 is not none %}
-  
-  round 3
-  
-  <select name={{ match.number ~ "round3" }} required>
-    <option value="1">win</option>
-    <option value="0">loss</option>
-  </select>
-  <br>
-  {% else %}
-  round 3 not played
-  <br>
-  {% endif %}
-  <br>
-  {% endfor %}
-  <input type="submit" value="Submit">
+      </thead>
+      <tr>
+        <td>
+          Date
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="date" name="date" required>
+        </td>
+      </tr>
+      {% for match in matches %}
+      <input type="hidden" id={{ match.number ~ "start" }} name={{ match.number ~ "start" }} value={{match.start}}>
+      <input type="hidden" id={{ match.number ~ "end" }} name={{ match.number ~ "end" }} value={{match.end}}>
+      
+      <tr>
+        <td>
+          <p class="font-weight-bold mt-4 mb-0 pb-0">{{match.start_string}} - {{match.end_string}}</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Character : {{player}}
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+
+          Team : {{match.team_string}}
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          Enemy Team : {{match.opponent_string}}
+
+        </td>
+
+      </tr>
+      <tr>
+        <td>
+          <div class="form-group">
+            
+            <input type="text" name={{ match.number ~ "note" }} class="form-control" id="{{ match.number ~ "note" }}"  placeholder="add a note">
+            
+          </div>
+        </td>
+      </tr>
+      <tr>
+        
+        <td>
+          round 1
+          <select name={{ match.number ~ "round1" }} required>
+            {% if match.round1 %}
+            <option selected="selected" value="1">win </option>
+            <option value="0">loss</option>
+            {% else %}
+            <option value="1">win </option>
+            <option selected="selected" value="0">loss </option>
+
+            {% endif %}
+          </select>
+
+        </td>
+        {% if match.error is not none %}
+        <td> {{match.error}} </td>
+        {% endif %}
+      </tr>
+
+      <tr>
+        <td>
+          round 2
+          <select name={{ match.number ~ "round2" }} required>
+            {% if match.round2 %}
+            <option selected="selected" value="1">win </option>
+            <option value="0">loss</option>
+            {% else %}
+            <option value="1">win </option>
+            <option selected="selected" value="0">loss </option>
+
+            {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          {% if match.round3 is not none %}
+
+          round 3
+
+          <select name={{ match.number ~ "round3" }} required>
+            {% if match.round3 %}
+            <option selected="selected" value="1">win </option>
+            <option value="0">loss</option>
+            {% else %}
+            <option value="1">win </option>
+            <option selected="selected" value="0">loss </option>
+
+            {% endif %}
+          </select>
+
+          {% else %}
+          round 3 not played
+          {% endif %}
+
+          {% endfor %}
+          <div class="control-group mt-4 ">
+            <input type="submit" value="Submit">
+          </div>
+    </tbody>
+
+
+
+    {% endif %}
+
 </form>
 
-{% endif %}
 
 
-<td>
-  {{error}}
-</td>
 
 
 {% endblock %}
