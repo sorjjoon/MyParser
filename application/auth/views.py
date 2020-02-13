@@ -27,6 +27,16 @@ class LoginForm(FlaskForm):
     class Meta:
         csrf = False
 
+@app.route("/auth/delete", methods =["POST", "GET"])
+@login_required
+def delete_user():
+    if request.method == "GET":        
+        return redirect(url_for("index"))
+
+    db.delete_user(current_user.get_id())
+    logout_user()
+    return redirect(url_for("index"))
+
 @app.route("/auth/register", methods = ["GET", "POST"])
 def register():
     if request.method =="GET":
@@ -62,11 +72,8 @@ def login_auth():
 def update_password():
     
     if request.method == "GET":
-        return render_template("auth/newpass.html", form = PasswordForm())
-    #EqaulTo validator doesn't seem to work, so checking that passwords are same here
-    #if request.form.get("password1") == request.form.get("password2") and request.form.get("password1") is not None:    
-    form = PasswordForm(request.form)
-    
+        return render_template("auth/newpass.html", form = PasswordForm()) 
+    form = PasswordForm(request.form)    
     if form.validate(): 
         new_pass = request.form.get("password1") #Doesn't matter if we use 1 or 2 (since we have validated them to be same)
         db.update_password(current_user.get_id(), new_pass)
@@ -75,16 +82,7 @@ def update_password():
         
     else:
         return render_template("auth/newpass.html", form = form)
-        
-        
-        
-    #return render_template("auth/newpass.html", form = PasswordForm(), error = "Passwords don't match")
-
-
-
-    
-
-
+             
 
 @app.route("/auth/logout")
 @login_required

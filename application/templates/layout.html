@@ -1,18 +1,21 @@
+
+
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
+  <link href="https://developer.snapappointments.com/bootstrap-select/A.ajax,,_libs,,_highlight.js,,_9.15.6,,_css,,_github.min.css+css,,_base.css+css,,_custom.css+dist,,_css,,_bootstrap-select.min.css,Mcc.MsOMCVf2_h.css.pagespeed.cf.zpjYFY_U7q.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
+  </head>
 <title>MyParser</title>
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light mr-2 ml-2" style="background-color: #5e5a59;">
+  <nav class="navbar navbar-expand-lg navbar-light mr-2 ml-2 mt-0" style="background-color: #5e5a59;">
     <a class="navbar-brand" href="{{ url_for('index') }}">MyParser</a>
-    
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
 
@@ -33,6 +36,9 @@
       <ul class="navbar-nav ml-auto">
         {% if current_user.is_authenticated %}
         <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('chars') }}">My Characters</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{{ url_for('update_password') }}">{{ current_user.name }}</a>
         </li>
         <li class="nav-item">
@@ -45,9 +51,7 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('register') }}">Create User</a>
         </li>
-
         {% endif %}
-        
     </div>
   </nav>
 
@@ -69,7 +73,8 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
-
+  <script src="https://developer.snapappointments.com/bootstrap-select/ajax/libs/highlight.js/9.15.6/js/highlight.pack.js.pagespeed.jm.dO4qkBpHzz.js"></script>
+  <script src="https://developer.snapappointments.com/bootstrap-select/dist,_js,_bootstrap-select.min.js+search,_main.js+js,_base.js.pagespeed.jc.NhC9Amf2oQ.js"></script><script>eval(mod_pagespeed_2HaUiZdTC$);</script>
 </body>
 
 </html>

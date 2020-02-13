@@ -3,35 +3,120 @@
 {% block body %}
 <p>
 
-    Win precentage
-    <br>
-    {{win_pre}} % 
-    <br>
-    Times player played with certain players
+  Win precentage: {{win_pre}} %
+  <br>
+  Total games: {{total}}
+  <br>
+  <button data-toggle="collapse" data-target="#params">Parameters</button>
 
-    <table class="table">
-        <thead>
-          <tr>
-            <!-- <th scope="col">#</th> -->
-            
-            <th scope="col">Name</th>
-            <th scope="col">With</th>
-            <th scope="col">Against</th>
-          </tr>
-        </thead>
-        <tbody>
-            {%for player in players%}
-          <tr>
-            <!-- <th scope="row">{{ loop.index }}</th> -->
-            <td>{{player.0}}</td>
-            <td>{{player.1}}</td>
-            <td>{{player.2}}</td>
-          </tr>
-          
-            
-          {% endfor %}
-        </tbody>
-        
-      </table>
+  <div id=params class="collapse">
+    <form class="form-horizontal" method="POST" action="{{ url_for('stats') }}">
+
+      <div class="container">
+        <div class="row mb-3">
+          <div class="col-sm">
+
+            <button type="button" data-toggle="collapse" data-target="#chars">Characters</button>
+
+            <div id=chars class="collapse">
+              <select id="char_select" name=char_select class="w-50 mr-0 selectpicker show-menu-arrow form-control"
+                includeSelectAllOption: true multiple>
+                {%for char in chars%}
+                <option>{{char.name}}</option>
+                {% endfor %}
+              </select>
+
+            </div>
+          </div>
+          <div class="col-sm">
+
+            <button type="button" data-toggle="collapse" data-target="#servers">Servers</button>
+
+            <div id=servers class="collapse">
+              <select id="server_select" name=server_select class="w-50 mr-0 selectpicker show-menu-arrow form-control"
+                includeSelectAllOption: true multiple>
+                <option>Darth Malgus</option>
+                <option>Tulak Hord</option>
+                <option>Satele Shan</option>
+                <option>Star Forge</option>
+                <option>The Leviathan</option>
+              </select>
+
+            </div>
+          </div>
+          <div class="col-sm">
+
+
+            <button type="button" data-toggle="collapse" data-target="#dates">Date range</button>
+
+            <div id=dates class="collapse">
+              <tr>
+                <td>
+                  {{ form.start.label }}
+                </td>
+                <td>
+                  {{ form.start }}
+                </td>
+                <td>
+                  <ul>
+                    {% for error in form.start.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  {{ form.end.label }}
+                </td>
+                <td>
+                  {{ form.end }}
+                </td>
+                <td>
+                  <ul>
+                    {% for error in form.end.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+              </tr>
+            </div>
+          </div>
+
+
+          <br>
+
+        </div>
+        <button type="submit" class="btn btn-primary">Query</button>
+      </div>
+    </form>
+  </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+
+        <th scope="col">Name</th>
+        <th scope="col">With</th>
+        <th scope="col">Against</th>
+        <th scope="col">Win % playing with</th>
+        <th scope="col">Win % playing against</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%for player in players%}
+      <tr>
+        <td>{{player.0}}</td>
+        <td>{{player.1}}</td>
+        <td>{{player.2}}</td>
+        <td>{{player.3}}</td>
+        <td>{{player.4}}</td>
+      </tr>
+
+
+      {% endfor %}
+    </tbody>
+
+  </table>
 </p>
 {% endblock %}

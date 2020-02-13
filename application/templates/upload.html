@@ -28,12 +28,11 @@
   <br>
   <input type="date" name="date" required>
   <br>
-  <input type="hidden" id="size" name="size" value={{size}}>
-  <input type="hidden" id="team" name="team" value={{size}}>
-  <input type="hidden" id="opponent" name="opponent" value={{size}}>
   {% for match in matches %}
   <br>
   <b>{{match.start_string}} - {{match.end_string}}</b>
+  <br>
+  Character : {{player}}
   <br>
   Team : {{match.team_string}}
   <br>

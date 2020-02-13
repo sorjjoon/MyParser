@@ -1,46 +1,79 @@
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, LargeBinary, Date, Boolean, DateTime, engine
-from sqlalchemy.sql import select, insert, delete, update, desc
+from sqlalchemy.sql import select, insert, delete, update, desc, join, distinct, Select, between
+from sqlalchemy.engine import Engine
 from application.auth.account import account
 from sqlalchemy.types import DateTime, Date, Time
-from application.domain.domain import match, log
+from application.domain.domain import match, log, char
 from datetime import date as pydate
-
+import os
 class data:
     def __init__(self, used_engine: engine):
-        #Creating tables, TODO cascading for log_id and match_id
-        
+        if not os.environ.get("HEROKU"):
+            #sqlite doesn't enforce foreign keys by default, turning them on here (to enforce cascade)
+            def _fk_pragma_on_connect(dbapi_con, con_record):
+                dbapi_con.execute('pragma foreign_keys=ON')
+
+            from sqlalchemy import event
+            event.listen(used_engine, 'connect', _fk_pragma_on_connect)
+
         metadata = MetaData()
-        self.account = Table('Account', metadata,
+        self.account = Table('account', metadata,
         Column("id",Integer, primary_key=True),
         Column("username",String(150), nullable=False),
         Column("password",String(150), nullable=False))
         
-        self.log = Table('Log', metadata,
-        Column("id",Integer, primary_key=True, ),
-        Column("owner_id",Integer, ForeignKey("Account.id", ondelete="CASCADE"), nullable=False),
+        self.log = Table('log', metadata,
+        Column("id",Integer, primary_key=True ),
+        Column("owner_id",Integer, ForeignKey("account.id", ondelete="CASCADE"), nullable=False),
         Column("log_file",LargeBinary),
+        Column("char_id",Integer, ForeignKey("char.id", onupdate="CASCADE")),
         Column("start_date",Date))
 
+
+        self.char = Table("char", metadata,
+        Column("id",Integer, primary_key=True ),
+        Column("name", String(30)),
+        Column("server", String(30)),
+        Column("owner_id",Integer, ForeignKey("account.id", ondelete="CASCADE"), nullable=False),
+        Column("char_class", String(30)))
+
         self.match_player = Table('match_player', metadata,
-        Column("player_id",Integer, ForeignKey("Player.id", onupdate="CASCADE"), primary_key=True),
-        Column("match_id",Integer, ForeignKey("Match.id", ondelete="CASCADE"), primary_key=True),
+        Column("player_id",Integer, ForeignKey("player.id", onupdate="CASCADE"), primary_key=True),
+        Column("match_id",Integer, ForeignKey("match.id", ondelete="CASCADE"), primary_key=True),
         Column("side",Boolean, nullable = False))
 
-        self.match = Table('Match', metadata,
+        self.match = Table('match', metadata,
         Column("id",Integer, primary_key=True),
         Column("round1",Boolean),
         Column("round2",Boolean),
         Column("round3",Boolean, default= None),
-        Column("log_id", Integer, ForeignKey("Log.id", ondelete="CASCADE")),
+        Column("log_id", Integer, ForeignKey("log.id", ondelete="CASCADE")),
         Column("start_time", Time),
         Column("end_time", Time))
         
-        self.player = Table('Player', metadata,    
+        self.player = Table('player', metadata,    
         Column("name",String(30), nullable = False),
         Column("id",Integer, primary_key=True))
         self.engine=used_engine
 
         metadata.create_all(used_engine) #checks if table exsists first
+
+    def update_char(self, id, char_class, server):
+        sql = update(self.char).values(char_class=char_class, server=server).where(self.char.c.id==id) 
+        with self.engine.connect() as conn:
+            conn.execute(sql)
+
+    def get_char_name_by_id(self, char_id: int):
+        sql = select([self.char.c.name]).where(self.char.c.id == char_id)
+        with self.engine.connect() as conn:
+            rs = conn.execute(sql)
+            return rs.fetchone()[self.char.c.name]
+        
+
+    def delete_user(self, user_id):
+        sql = self.account.delete().where(self.account.c.id == user_id)
+        with self.engine.connect() as conn:
+            conn.execute(sql) #delete cascades
 
     def delete_log(self, log_id:int, user_id: int):
         #Check user owns the log he is trying to delete
@@ -61,12 +94,23 @@ class data:
         with self.engine.connect() as conn:
             result_set = conn.execute(sql)
             row = result_set.fetchone()
+            
             result_set.close()       
             if row is not None:
                 return account(row[self.account.c.id],row[self.account.c.username], row[self.account.c.password])
             else:
                 return None
             
+    def get_chars(self, user_id):
+        j = self.log.join(self.char)
+        sql = select([self.char]).select_from(j).distinct().where(self.log.c.owner_id==user_id)
+        with self.engine.connect() as conn:
+            chars = []
+            result_set = conn.execute(sql)
+            for row in result_set:
+                a= char( row[self.char.c.id], row[self.char.c.name], row[self.char.c.char_class], row[self.char.c.server] )
+                chars.append(a)
+        return chars
 
 
     def update_password(self, user_id: int, new_password: str):
@@ -89,9 +133,16 @@ class data:
                 return None
 
 
-    def get_logs(self, user_id):
+    def get_logs(self, user_id, chars=None, date_range=None, servers=None):
+        j = self.log.join(self.char)
         
-        sql = select([self.log.c.id,self.log.c.start_date]).where(self.log.c.owner_id==user_id).order_by(desc(self.log.c.start_date))
+        sql = select([self.log.c.id,self.log.c.start_date, self.char.c.name]).select_from(j).where(self.log.c.owner_id==user_id).order_by(desc(self.log.c.start_date))
+        if chars:
+            sql = sql.where(self.char.c.name.in_(chars))
+        if date_range:
+            sql = sql.where(between(self.log.c.start_date, date_range[0], date_range[1]) )
+        if servers:
+            sql = sql.where(self.char.c.server.in_(servers))
         logs=[]
         with self.engine.connect() as conn:
             result_set = conn.execute(sql)
@@ -99,10 +150,11 @@ class data:
                
                 log_id=row[self.log.c.id]
                 matches = self.get_matches([log_id])
-                logs.append(log(log_id, row[self.log.c.start_date], matches = matches))
+                name = row[self.char.c.name]
+                logs.append(log(log_id, row[self.log.c.start_date],name, matches = matches))
             
 
-            return logs
+        return logs
 
 
     def check_user(self, username):
@@ -146,11 +198,25 @@ class data:
                 conn.execute(sql)
         return match_id 
 
-    def insert_log(self, owner_id: int, matches: list, date: str): 
+    def insert_log(self, owner_id: int, matches: list, date: str, player: str): 
+        sql = select([self.char.c.id]).where(self.char.c.name == player)
                       
-        sql = self.log.insert().values(owner_id=owner_id, start_date=pydate.fromisoformat(date), log_file = None)
         with self.engine.connect() as conn:
-            result=conn.execute(sql) 
+            result=conn.execute(sql)
+            row = result.fetchone()
+            
+            if row is not None:
+                char_id=row[self.char.c.id]
+
+            else:
+                sql = self.char.insert().values(name = player, owner_id=owner_id)
+                result=conn.execute(sql)
+                char_id = result.inserted_primary_key[0]
+                
+
+            sql = self.log.insert().values(owner_id=owner_id, start_date=pydate.fromisoformat(date), log_file = None, char_id=char_id)
+
+            result=conn.execute(sql)
             log_id = result.inserted_primary_key[0]
         
             for match in matches:
@@ -165,16 +231,30 @@ class data:
                 matches.append(row[self.match.c.id])
         return matches
         
+    def get_team_and_opponents(self, match_id: int):
+        j = self.match_player.join(self.player)
+        sql = select([self.match_player, self.player.c.name]).select_from(j).where(self.match_player.c.match_id==match_id)
+        with self.engine.connect() as conn:
+            result_set = conn.execute(sql)
+            team = []
+            enemy = []
+            for row in result_set:
+                if row[self.match_player.c.side]:
+                    team.append(row[self.player.c.name])
+                else:
+                    enemy.append(row[self.player.c.name])
+        return team, enemy
 
     def get_matches(self, log_ids):
+        #TODO combine these 2 queries
         sql = select([self.match],self.match.c.log_id.in_(log_ids))
         matches= []
         with self.engine.connect() as conn:
             result_set = conn.execute(sql)
             
             for row in result_set:
-                
-                matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], [], []))
+                team, enemy = self.get_team_and_opponents(row[self.match.c.id])
+                matches.append(match(row[self.match.c.start_time],row[self.match.c.end_time], row[self.match.c.round1], row[self.match.c.round2], row[self.match.c.round3], team, enemy))
         
         return matches
                 

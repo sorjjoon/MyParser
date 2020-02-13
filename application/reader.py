@@ -19,7 +19,8 @@ class Row():
 def next_element(row: str):
     element = get_next_element(row)
     return element, row.replace("["+element+"]", "", 1).strip()
-#This is an incomplete reader which can be expanded later, depending on the needs of the project
+
+
 def read_row(row: str):
     timestamp, row = next_element(row)
     source, row = next_element(row)
@@ -35,10 +36,9 @@ def parse_log(log_name: str):
     path = "uploads/"+log_name
     matches =[]
     rounds=[]
-    player ="" #name of the log_owner
+    player =None #name of the log_owner
     try:
         with open(path,"r", encoding="iso-8859-1") as f:
-            #TODO, if time make file reading work properly
             in_match = False   #true while inside a match, false otherwise
             count = 1
             i =0 #Used for tracking row number. 
@@ -95,7 +95,7 @@ def parse_log(log_name: str):
                         in_match=True
                         team = []
                         opponents = []
-        return matches
+        return matches, player
 
     except EnvironmentError as r:
         print(r)

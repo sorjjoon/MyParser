@@ -6,6 +6,65 @@ from application.domain.domain import match
 from datetime import date as pydate
 from datetime import time as pytime
 from application.database.stats import win_pre, player_count
+from wtforms import SelectMultipleField
+
+from flask_wtf import FlaskForm
+from wtforms import validators
+from wtforms.fields.html5 import DateField
+
+
+class DateForm(FlaskForm):
+    start = DateField("start")
+    end = DateField("end")
+    def validate(self):
+        if self.start.data is None and self.end.data is None:
+            return True
+        elif self.start.data and not self.end.data:            
+            self.end.errors = list(self.end.errors)
+            self.end.errors.append('Please pick a valid range')
+            return False
+        elif self.end.data and not self.start.data:
+            self.end.errors = list(self.end.errors)
+            self.end.errors.append('Please pick a valid range')
+            return False
+
+        if self.start.data > self.end.data:            
+            self.end.errors = list(self.end.errors)
+            self.end.errors.append('Please pick a valid range')
+            return False
+        else:
+            return True
+
+
+def get_defaults():
+    chars = db.get_chars(current_user.get_id())
+    
+    return chars
+
+    
+def generate_view(selected_chars = None, date_range=None, servers= None):
+    logs = db.get_logs(current_user.get_id(), chars=selected_chars, date_range=date_range, servers=servers)        
+    log_ids=[]
+    total = 0
+    chars = get_defaults()
+    for log in logs:
+        log_ids.append(log.id)
+        total+=len(log.matches)
+    if log_ids:
+        win_prec = round(win_pre(log_ids)*100,2)
+    else:
+        win_prec = 0
+    player_counts = player_count(log_ids)
+    for player in player_counts:
+        if player[3] is not None:
+            player[3]=round(player[3]*100,2)
+        else:
+            player[3] = " - "
+        if player[4] is not None:
+            player[4]=round(player[4]*100,2)
+        else:
+            player[4] = " - "
+    return logs, win_prec, player_counts, total, chars
 
 @app.route("/")
 def index():   
@@ -30,56 +89,42 @@ def get_matches():
 
 
 
-    
+
+@app.route("/chars/", methods=["GET","POST"])
+@login_required
+def chars():
+    return render_template("chars.html", chars = db.get_chars(current_user.get_id()))
 
 
-@app.route("/stats", methods =["GET"])
+@app.route("/stats", methods =["GET", "POST"])
 @login_required
 def stats():
-    logs = db.get_logs(current_user.get_id())        
-    log_ids=[]
-    for log in logs:
-        log_ids.append(log.id)
-    if log_ids:
-        win_prec = round(win_pre(log_ids)*100,2)
+    if request.method =="GET":
+        logs, win_prec, player_counts, total, chars = generate_view()  
+        return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts, total=total, chars = chars, form = DateForm())
     else:
-        win_prec = 0
-    player_counts = player_count(log_ids)
-    return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts)
+        form = DateForm(request.form)
+        if not form.validate():
+            logs, win_prec, player_counts, total, chars = generate_view()  
+            return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts, total=total, chars = chars, form = form)
+            
 
-#TODO validation
-@app.route("/newlog", methods=["POST", "GET"])
-@login_required
-def add_log():
-    if request.method == "GET":
-        return redirect(url_for("index"))
-    matches =[]
+        selected_chars = request.form.getlist("char_select")
+        servers = request.form.getlist("server_select")
+        range = None
+        if form.start.data:
+            range = [form.start.data, form.end.data]
+        print("range")
+        print(range)
+        print("servers")
+        print(servers)
+        print("chars")
+        print(selected_chars)
+        logs, win_prec, player_counts, total, chars = generate_view(selected_chars=selected_chars, date_range= range, servers = servers)
+        
+                
+        return render_template("stats.html", logs = logs, win_pre=win_prec, players = player_counts, total=total, chars=chars, form = form)
 
-    size = session["log_size"]
-    session.pop("log_size")
-    date = request.form.get("date")
+
+
     
-    for match_number in range(1,size+1):
-        
-        team = session["match"+str(match_number)+"_team"]
-        opponent = session["match"+str(match_number)+"_opponent"]
-        session.pop("match"+str(match_number)+"_team")
-        session.pop("match"+str(match_number)+"_opponent")
-
-        round1=bool(int(request.form.get(str(match_number)+"round1")))
-        
-        round2=bool(int(request.form.get(str(match_number)+"round2")))
-
-        if request.form.get(str(match_number)+"round3") is None:
-            round3=None
-        else:
-            round3=bool(int(request.form.get(str(match_number)+"round3")))
-        
-        start_time = pytime.fromisoformat(request.form.get(str(match_number)+"start"))
-        end_time= pytime.fromisoformat(request.form.get(str(match_number)+"end"))
-        matches.append(match(start_time, end_time, round1, round2, round3, team, opponent))
-
-    db.insert_log(current_user.get_id(),matches,date)
-
-    return redirect(url_for("index"))
-

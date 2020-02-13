@@ -2,13 +2,14 @@
 
 {% block body %}
 <p>
-    Saved matches.
-    <br>
+    
+    <div class="container ml- -1">
+      <p> Saved matches</p>
     {%for log in logs%}
     
-    <button data-toggle="collapse" data-target={{"#" ~ log.id}}>{{log.date}}</button>
+    <button class="btn btn-light" data-toggle="collapse" data-target={{"#" ~ log.id}}>{{log.date}},  {{log.char}}</button>
 
-<div id={{log.id}} class="collapse">
+    <p><div id={{log.id}} class="collapse"></p>
 
   <form method="POST" action={{ url_for('delete_log', log_id=log.id) }}>
     <input type="submit" value="Delete"/>
@@ -55,5 +56,6 @@
 </div> 
 
     {% endfor %}
+  </div> 
 </p>
 {% endblock %}

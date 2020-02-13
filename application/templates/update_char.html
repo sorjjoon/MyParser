@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form method="POST" action="{{ url_for('update_char_info', char_id=id) }}" >
+
+
+<table>
+    <tr>
+        {{char_name}}
+    </tr>
+    <tr>
+      <td>
+        {{form.server.label}}
+      </td>
+      <td>
+	{{ form.server }}
+      </td>
+      <td>
+            <ul>
+              {% for error in form.server.errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+    </tr>
+    
+    <tr>
+      <td>
+	{{ form.char_class.label }}
+      </td>
+      <td>
+	{{ form.char_class }}
+      </td>
+      
+    </tr>
+    <tr>
+      <td colspan="2">
+	<input type="submit" value="Update"/>
+      </td>
+    </tr>
+  </table>
+
+</form>
+
+
+
+
+{% endblock %}
