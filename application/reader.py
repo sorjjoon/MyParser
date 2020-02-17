@@ -47,7 +47,7 @@ def find_team_opponent(row_object:Row, team:list, opponents:list, owner):
     if row_object.target == row_object.source: #saves time
         return
 
-        #Starter buffs "hunters, mark, Coordination and might are the diffrent types of buffs players can apply to their team mates (and only their team mates"
+        #Starter buffs hunters, mark, Coordination and might are the diffrent types of buffs players can apply to their team mates (and only their team mates)"
     if "Hunter's Boon" in row_object.ability_name or "Mark of Power" in row_object.ability_name or "Coordination" in row_object.ability_name or "Unnatural Might" in row_object.ability_name:
         
         #appending to team the target or source that is not owner (and not already in the list)

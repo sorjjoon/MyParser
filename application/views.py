@@ -113,14 +113,7 @@ def stats():
         servers = request.form.getlist("server_select")
         range = None
         if form.start.data:
-            range = [form.start.data, form.end.data]
-        print("range")
-        print(range)
-        print("servers")
-        print(servers)
-        print("chars")
-        print(selected_chars)
-        print(my_classes)
+            range = [form.start.data, form.end.data]        
         logs, win_prec, player_counts, total, chars = generate_view(selected_chars=selected_chars, date_range= range, servers = servers,my_class=my_classes)
         
                 

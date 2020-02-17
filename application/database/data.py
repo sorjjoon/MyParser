@@ -9,7 +9,7 @@ from datetime import date as pydate
 import os
 from random import choice
 
-#TODO refactor this class to not be a mess
+
 class data:
     def __init__(self, used_engine: engine):
         if not os.environ.get("HEROKU"):
@@ -63,8 +63,13 @@ class data:
         Column("id",Integer, primary_key=True))
 
         self.engine=used_engine
-
         metadata.create_all(used_engine) #checks if table exsists first
+    
+
+    def match_update_note(self, match_id, new_note):
+        sql = update(self.match).values(note=new_note).where(self.match.c.id==match_id)
+        with self.engine.connect() as conn:
+            conn.execute(sql)
 
     def update_char(self, id, char_class, server):
         sql = update(self.char).values(char_class=char_class, server=server).where(self.char.c.id==id) 
