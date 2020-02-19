@@ -54,7 +54,7 @@ def player_count(self, match_ids: List[int], classes=None):
             JOIN player ON player.id= match_player.player_id
             JOIN match ON match.id = match_player.match_id            
             """+where_clause+"""
-            GROUP BY player.name 
+            GROUP BY player.name, class 
             ORDER BY COUNT(case match_player.side when true then 1 else null end) + COUNT(case match_player.side when false then 1 else null end) DESC;        
             """
 
