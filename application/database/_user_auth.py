@@ -5,7 +5,7 @@ from application.auth.account import account
 from sqlalchemy.types import DateTime, Date, Time, Text
 
 from hashlib import scrypt
-from secrets import token_bytes
+from secrets import token_hex
 
 
 def get_user(self, username: str, password: str):
@@ -64,7 +64,7 @@ def update_password(self, user_id: int, new_password: str):
 
 
 def generate_new_salt():
-    return token_bytes(32)
+    return token_hex(32)
 
 def hash_password_salt(password, salt): #n, r chosen to be fast to compute         
-    return scrypt(bytes(password, "utf-8"),n=16384,r=8, p=1, salt=salt)
+    return scrypt(bytes(password, "utf-8"),n=16384,r=8, p=1, salt=bytes(salt, "utf-8")).hex()
