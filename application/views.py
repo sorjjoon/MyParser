@@ -73,6 +73,7 @@ def generate_view(selected_chars = None, date_range=None, servers= None, my_clas
 def index():   
     
     return render_template("index.html")
+    
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('index.html'), 404

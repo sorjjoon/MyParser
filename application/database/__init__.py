@@ -3,7 +3,7 @@ from datetime import date as pydate
 from random import choice
 
 from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
-                        LargeBinary, MetaData, String, Table, engine)
+                        LargeBinary, MetaData, String, Table, engine, UniqueConstraint)
 from sqlalchemy.engine import Engine
 from sqlalchemy.sql import (Select, between, delete, desc, distinct, insert,
                             join, select, update)
@@ -14,6 +14,7 @@ from application.domain.char import char
 from application.domain.log import log
 from application.domain.match import match
 from application.domain.player import Player
+
 
 #TODO close all result_sets
 class data:
@@ -68,7 +69,9 @@ class data:
         Column("name",String(30), nullable = False),
         Column("player_class",String(30)),
         Column("server",String(30)),    
-        Column("id",Integer, primary_key=True))
+        Column("id",Integer, primary_key=True),
+        UniqueConstraint('name', 'server', name='player_server_unique')
+        )
 
         self.engine=used_engine
         metadata.create_all(used_engine) #checks if table exsists first
