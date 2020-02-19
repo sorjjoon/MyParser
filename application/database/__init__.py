@@ -8,13 +8,13 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.sql import (Select, between, delete, desc, distinct, insert,
                             join, select, update)
 from sqlalchemy.types import Date, DateTime, Text, Time, VARBINARY
-
+from sqlalchemy.dialects.postgresql import BIT
 from application.auth.account import account
 from application.domain.char import char
 from application.domain.log import log
 from application.domain.match import match
 from application.domain.player import Player
-
+import os
 
 #TODO close all result_sets
 class data:
@@ -28,12 +28,20 @@ class data:
             event.listen(used_engine, 'connect', _fk_pragma_on_connect)
 
         metadata = MetaData()
-        self.account = Table('account', metadata,
-        Column("id",Integer, primary_key=True),
-        Column("username",String(150), nullable=False),
-        Column("salt", VARBINARY(32), nullable=False),
-        Column("password",String(150), nullable=False))
-        
+        #postgre... varbinary doesn't exsist
+        if os.environ.get("HEROKU"):
+            self.account = Table('account', metadata,
+            Column("id",Integer, primary_key=True),
+            Column("username",String(150), nullable=False),
+            Column("salt", BIT(32), nullable=False),
+            Column("password",String(150), nullable=False))
+        else:
+            self.account = Table('account', metadata,
+            Column("id",Integer, primary_key=True),
+            Column("username",String(150), nullable=False),
+            Column("salt", VARBINARY(32), nullable=False),
+            Column("password",String(150), nullable=False))
+     
         self.log = Table('log', metadata,
         Column("id",Integer, primary_key=True ),
         Column("note",Text),
