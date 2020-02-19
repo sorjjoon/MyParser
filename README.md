@@ -1,5 +1,4 @@
 [Heroku link](https://vast-refuge-33676.herokuapp.com/)
-note, on heroku stats page doesn't work atm. This warning is here in case u see this before I've fixed it (works fine locally with sqlite)
 
 
 # MyParser
