@@ -33,7 +33,7 @@ class data:
         self.account = Table('account', metadata,
         Column("id",Integer, primary_key=True),
         Column("username",String(150), nullable=False),
-        Column("salt", String(50), nullable=False),
+        Column("salt", String(144), nullable=False),
         Column("password",String(150), nullable=False))
     
      
