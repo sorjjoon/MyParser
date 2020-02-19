@@ -40,8 +40,8 @@
 </form>
 <br>
 <br>
-<form method ="POST" action= "{{ url_for('delete_user') }}"id="delete_user">
-	<input type="submit" onclick="clicked();" value="Delete Account"/>
+<form method ="POST" action= "{{ url_for('delete_user') }}"id="delete_user" onsubmit="return clicked()">
+	<input type="submit" value="Delete Account"/>
 
 </form>
 <script type="text/javascript">
