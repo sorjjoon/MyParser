@@ -29,19 +29,13 @@ class data:
 
         metadata = MetaData()
 
-        #postgre... varbinary doesn't exsist
-        if os.environ.get("HEROKU"):
-            self.account = Table('account', metadata,
-            Column("id",Integer, primary_key=True),
-            Column("username",String(150), nullable=False),
-            Column("salt", BYTEA(32), nullable=False),
-            Column("password",String(150), nullable=False))
-        else:
-            self.account = Table('account', metadata,
-            Column("id",Integer, primary_key=True),
-            Column("username",String(150), nullable=False),
-            Column("salt", VARBINARY(32), nullable=False),
-            Column("password",String(150), nullable=False))
+        
+        self.account = Table('account', metadata,
+        Column("id",Integer, primary_key=True),
+        Column("username",String(150), nullable=False),
+        Column("salt", String(50), nullable=False),
+        Column("password",String(150), nullable=False))
+    
      
         self.log = Table('log', metadata,
         Column("id",Integer, primary_key=True ),
