@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container-fluid"> 
+
+    
+    <div class="table-responsive">
+    <table class="table">
+      <thead>
+          <tr>
+  
+              <th style="width: 14%" scope="col">Time</th>
+              <th style="width: 10%" scope="col">Round 1</th>
+              <th style="width: 10%" scope="col">Round 2</th>
+              <th style="width: 10%" scope="col">Round 3</th>
+              <th  scope="col">Team</th>
+              <th  scope="col">Opponent</th>
+              <th  scope="col">Note</th>
+              
+          </tr>
+      </thead>
+      <tbody>
+        {%for match in log.matches%}
+        <tr>
+        
+          <td>{{match.start_string}} - {{match.end_string}}</td>
+        
+          <td>{% if match.round1 %}
+            win
+  
+            {% else %}
+            loss
+  
+            {% endif %}
+        </td>
+        <td> {% if match.round2 %}
+            win
+  
+            {% else %}
+            loss
+            {% endif %}
+        </td>
+
+        <td>
+            {% if match.round3 is not none %}
+  
+            {% if match.round3 %}
+            win
+  
+            {% else %}
+            loss
+            {% endif %}
+  
+            {% else %}
+            -
+  
+            {% endif %}
+
+        </td>
+          
+        
+        
+          <td>
+            {{match.team_string}}
+          </td>
+        
+          <td>
+            {{match.opponent_string}}
+          </td>
+          <td>
+            {{match.note}}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      
+      </tbody>
+  </table>
+
+
+  
+    </div>
+
+</div>
+{% endblock %}

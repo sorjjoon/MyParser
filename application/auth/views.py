@@ -9,21 +9,21 @@ from application.auth import account
 def username_free(form, field):
     if not db.check_user(field.data):
         raise ValidationError('Username in use')
-class PasswordForm(FlaskForm):
-    password1 = PasswordField("New Password", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=30, message="Password must be between 5 and 30 characters"), validators.EqualTo("password2", message='Passwords must match')])
+class PasswordForm(FlaskForm): #TODO add old password
+    password1 = PasswordField("New Password", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=50, message="Password must be between 5 and 50 characters"), validators.EqualTo("password2", message='Passwords must match')])
     password2 = PasswordField("Confirm Password" )  #Only password1 needs to be validated
     class Meta:
         csrf = False
         
 class RegisterForm(FlaskForm):
-    username = StringField("Username", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=20, message="Username must be between 5 and 30 characters"),username_free])
-    password = PasswordField("Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=30, message="Password must be between 5 and 30 characters")])  #TODO password strength
+    username = StringField("Username", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=30, message="Username must be between 5 and 30 characters"),username_free])
+    password = PasswordField("Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=50, message="Password must be between 5 and 50 characters")])  #TODO password strength
     class Meta:
         csrf = False
 
 class LoginForm(FlaskForm):    
-    username = StringField("Username", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=20, message="Username must be between 5 and 30 characters")])
-    password = PasswordField("Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=30, message="Password must be between 5 and 30 characters")])  #TODO password strength
+    username = StringField("Username", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=30, message="Username must be between 5 and 30 characters")])
+    password = PasswordField("Password", validators=[validators.DataRequired(message=None), validators.Length(min=5, max=50, message="Password must be between 5 and 50 characters")])  #TODO password strength
     class Meta:
         csrf = False
 
@@ -42,7 +42,7 @@ def register():
     if request.method =="GET":
         return render_template("auth/register.html", form = RegisterForm())
     form = RegisterForm(request.form)
-    if not form.validate():
+    if not form.validate(): #form validation checks if username is free
         return render_template("auth/register.html", form = form)
     try:
         db.insert_user(form.username.data, form.password.data)

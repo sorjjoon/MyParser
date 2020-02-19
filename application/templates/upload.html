@@ -34,11 +34,12 @@
       <tr>
         <td>
           Date
+          
         </td>
       </tr>
       <tr>
         <td>
-          <input type="date" name="date" required>
+          <input type="date" name="date" required value={{date}}>
         </td>
       </tr>
       {% for match in matches %}
@@ -70,15 +71,7 @@
         </td>
 
       </tr>
-      <tr>
-        <td>
-          <div class="form-group">
-            
-            <input type="text" name={{ match.number ~ "note" }} class="form-control" id="{{ match.number ~ "note" }}"  placeholder="add a note">
-            
-          </div>
-        </td>
-      </tr>
+      
       <tr>
         
         <td>
@@ -134,7 +127,15 @@
           {% else %}
           round 3 not played
           {% endif %}
-
+          <tr>
+            <td>
+              <div class="form-group">
+                
+                <input type="text" name={{ match.number ~ "note" }} class="form-control" id="{{ match.number ~ "note" }}"  placeholder="add a note" {%if match.note is not none%} value={{match.note}} {% endif %}>
+                
+              </div>
+            </td>
+          </tr>
           {% endfor %}
           <div class="control-group mt-4 ">
             <input type="submit" value="Submit">

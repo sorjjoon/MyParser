@@ -2,62 +2,51 @@
 
 {% block body %}
 <p>
-    
-    <div class="container ml- -1">
-      <p> Saved matches</p>
-    {%for log in logs%}
-    
-    <button class="btn btn-light" data-toggle="collapse" data-target={{"#" ~ log.id}}>{{log.date}},  {{log.char}}</button>
 
-    <p><div id={{log.id}} class="collapse"></p>
-
-  <form method="POST" action={{ url_for('delete_log', log_id=log.id) }}>
-    <input type="submit" value="Delete"/>
-  </form>
-  {%for match in log.matches%}
-  <br>
-  <td><b>{{match.start_string}} - {{match.end_string}}</b></td>
-  <br>
-  Note : {{match.note}}
-  <br>
-  Team : {{match.team_string}}
-  <br>
-  Enemy Team : {{match.opponent_string}}
-  <br>
-  {% if match.round1 %}
-  round 1 win
-  <br>
-  {% else %} 
-  round 1 loss
-  <br>
-  {% endif %}
-  {% if match.round2 %}
-  round 2 win
-  <br>
-  {% else %}
-  round 2 loss
-  <br>
-  {% endif %}
-  {% if match.round3 is not none %}
-
-  {% if match.round3 %}
-  round 3 win
-  <br>
-  {% else %}
-  round 3 loss
-  <br>
-  {% endif %}
+  <div class="container ml- -1">
 
 
-  {% else %}
-  round 3 not played
-
-  {% endif %}
+    <table class="table">
+      <thead>
+          <tr>
   
-  {% endfor %}
-</div> 
+              <th scope="col">Date</th>
+              <th scope="col">Character</th>
+              <th scope="col">Note</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+          </tr>
+      </thead>
+      <tbody>
+        {%for log in logs%}
+          <tr>
+              <td>{{log.date}}</td>
+              <td>{{log.char}}</td>
+              <td>{{log.note}}</td>
+              <td>
+                <a href={{url_for('show_log', log_id=log.id) }}>Show</a> 
+                  
+              </td>
+              <td>
+                <a href="{{url_for('update_log', log_id=log.id) }}">Update</a> 
+              </td>
+              <td>
+                <a href=javascript:Confirmation({{log.id}});>Delete</a> 
+              </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
 
-    {% endfor %}
-  </div> 
-</p>
-{% endblock %}
+  </div>  
+  
+
+<script type="text/javascript">
+  function Confirmation(log_id) {
+var answer = confirm ("Are you sure?")
+if (answer)
+window.location="/delete/"+log_id;
+}
+
+</script>
+  {% endblock %}

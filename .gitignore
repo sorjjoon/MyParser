@@ -4,6 +4,7 @@
 __pycache__
 data.db
 *.txt
+.vscode
 !/documentation
 !requirements.txt
 procfile

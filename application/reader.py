@@ -1,7 +1,7 @@
 import os
 import datetime
 from datetime import time
-from application.domain.domain import match
+from application.domain.match import match
 from application.domain.player import Player
 
 
@@ -86,7 +86,7 @@ def parse_log(log_name: str):
             
             for row in f:
                 
-                if in_match:    #saves time, read only rows while we are in a match (there might be a lot of rows between matches)
+                if in_match:    #saves time, read only rows while we are in a match (might be a lot of rows between matches)
 
                     row_object = read_row(row)
 

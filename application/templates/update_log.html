@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form method="POST" action={{ url_for('update_log', log_id=log.id) }}>
+    <!-- TODO make this more user friendly -->
+    
+
+
+    <table class=".table-borderless mt-3">
+      <tbody>
+        <thead>
+  
+        </thead>
+        
+        <tr>
+          <td>
+            <input type="date" name="date" required value={{log.date}}>
+          </td>
+          <td>
+            {% if log.note is none %}
+            <input type="text" name={{ log.id ~ "log_note" }} class="form-control" id="{{ log.id ~ "note" }}"  placeholder="add a note for this log">
+            {% else %}
+            <input type="text" name={{ log.id ~ "log_note" }} class="form-control" id="{{ log.id ~ "note" }}"  value={{log.note}}>
+            {% endif %}
+          </td>
+        </tr>
+        
+          
+        {% for match in log.matches %}
+        <input type="hidden" id={{ match.id ~ "start" }} name={{ match.id ~ "start" }} value={{match.start}}>
+        <input type="hidden" id={{ match.id ~ "end" }} name={{ match.id ~ "end" }} value={{match.end}}>
+        <input type="hidden" id={{ match.id ~ "team" }} name={{ match.id ~ "start" }} value={{match.team_string}}>
+        <input type="hidden" id={{ match.id ~ "enemy" }} name={{ match.id ~ "end" }} value={{match.opponent_string}}>
+        <tr>
+          <td>
+            <p class="font-weight-bold mt-4 mb-0 pb-0">{{match.start_string}} - {{match.end_string}}</p>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Character : {{log.char}}
+          </td>
+  
+        </tr>
+        <tr>
+          <td>
+  
+            Team : {{match.team_string}}
+          </td>
+  
+        </tr>
+        <tr>
+          <td>
+            Enemy Team : {{match.opponent_string}}
+  
+          </td>
+  
+        </tr>
+        <tr>
+          <td>
+            <div class="form-group">
+                {% if match.note is none %}
+              <input type="text" name={{ match.id ~ "note" }} class="form-control" id="{{ match.id ~ "note" }}"  placeholder="add a note for this match">
+              {% else %}
+              <input type="text" name={{ match.id ~ "note" }} class="form-control" id="{{ match.id ~ "note" }}"  value={{match.note}}>
+              {% endif %}
+            </div>
+          </td>
+        
+        <td>
+        <tr>
+          
+          <td>
+            round 1
+            <select name={{ match.id ~ "round1" }} required>
+              {% if match.round1 %}
+              <option selected="selected" value="1">win </option>
+              <option value="0">loss</option>
+              {% else %}
+              <option value="1">win </option>
+              <option selected="selected" value="0">loss </option>
+  
+              {% endif %}
+            </select>
+  
+          </td>
+          {% if match.error is not none %}
+          <td> {{match.error}} </td>
+          {% endif %}
+        </tr>
+  
+        <tr>
+          <td>
+            round 2
+            <select name={{ match.id ~ "round2" }} required>
+              {% if match.round2 %}
+              <option selected="selected" value="1">win </option>
+              <option value="0">loss</option>
+              {% else %}
+              <option value="1">win </option>
+              <option selected="selected" value="0">loss </option>
+  
+              {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {% if match.round3 is not none %}
+  
+            round 3
+  
+            <select name={{ match.id ~ "round3" }} required>
+              {% if match.round3 %}
+              <option selected="selected" value="1">win </option>
+              <option value="0">loss</option>
+              {% else %}
+              <option value="1">win </option>
+              <option selected="selected" value="0">loss </option>
+  
+              {% endif %}
+              </td>
+            </tr>
+        </td>
+    </tr>
+            </select>
+  
+            {% else %}
+            round 3 not played
+            {% endif %}
+  
+            {% endfor %}
+            <div class="control-group mt-4 ">
+              <input type="submit" value="Submit">
+            </div>
+      </tbody>
+
+{% endblock %}
