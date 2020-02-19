@@ -8,7 +8,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.sql import (Select, between, delete, desc, distinct, insert,
                             join, select, update)
 from sqlalchemy.types import Date, DateTime, Text, Time, VARBINARY
-from sqlalchemy.dialects.postgresql import BIT
+from sqlalchemy.dialects.postgresql import BYTEA
 from application.auth.account import account
 from application.domain.char import char
 from application.domain.log import log
@@ -28,12 +28,13 @@ class data:
             event.listen(used_engine, 'connect', _fk_pragma_on_connect)
 
         metadata = MetaData()
+
         #postgre... varbinary doesn't exsist
         if os.environ.get("HEROKU"):
             self.account = Table('account', metadata,
             Column("id",Integer, primary_key=True),
             Column("username",String(150), nullable=False),
-            Column("salt", BIT(32), nullable=False),
+            Column("salt", BYTEA(32), nullable=False),
             Column("password",String(150), nullable=False))
         else:
             self.account = Table('account', metadata,
