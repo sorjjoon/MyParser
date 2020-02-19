@@ -49,6 +49,25 @@
           </div>
           <div class="col-sm">
 
+            <button type="button" data-toggle="collapse" data-target="#enemy_class">Player Class</button>
+
+            <div id=enemy_class class="collapse">
+              <select id="enemy_class_select" name=enemy_class_select class="w-50 mr-0 selectpicker show-menu-arrow form-control"
+                includeSelectAllOption: true multiple>
+                <option>Mercenary</option>
+                <option>Powertech</option>
+                <option>Juggernaut</option>
+                <option>Marauder</option>
+                <option>Sorcerer</option>
+                <option>Assassin</option>
+                <option>Operative</option>
+                <option>Sniper</option>
+              </select>
+
+            </div>
+          </div>
+          <div class="col-sm">
+
             <button type="button" data-toggle="collapse" data-target="#servers">Servers</button>
 
             <div id=servers class="collapse">
@@ -120,6 +139,7 @@
         <th scope="col">Against</th>
         <th scope="col">Win % playing with</th>
         <th scope="col">Win % playing against</th>
+        <th scope="col">Class</th>
       </tr>
     </thead>
     <tbody>
@@ -130,6 +150,7 @@
         <td>{{player.2}}</td>
         <td>{{player.3}}</td>
         <td>{{player.4}}</td>
+        <td> {{player.5}}</td>
       </tr>
 
 

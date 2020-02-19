@@ -9,8 +9,9 @@ from flask_uploads import UploadNotAllowed
 from flask_login import login_required, current_user
 
 from application.reader import parse_log
-from application.domain.domain import match, log
- 
+from application.domain.match import match
+from application.domain.log import log
+
 from datetime import date as pydate
 from datetime import time as pytime
 
@@ -61,7 +62,8 @@ def add_log():
     matches =[]
 
     #session popping after validations
-    things_to_pop=[]
+    things_to_pop=[] #list of all variables to pop after log is inserted
+
     size = session["log_size"]
     
 
@@ -71,7 +73,7 @@ def add_log():
     things_to_pop.append("player")
 
     date = request.form.get("date")
-    print(request.form)
+    
     errors = False #changed to true if one of the inputs fails to validate
     for match_number in range(1,size+1):
         
@@ -104,7 +106,8 @@ def add_log():
         db.insert_log(current_user.get_id(),matches,date, player)
         return redirect(url_for("index"))
     else:
-        return render_template("upload.html", form = UploadForm(), matches = matches, size = len(matches), player=player)
+        
+        return render_template("upload.html", form = UploadForm(), matches = matches, size = len(matches), player=player, date=date)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -127,7 +130,7 @@ def upload_log():
         number = 1
         session["log_size"]=len(matches)
         for match in matches:
-            match_dict = {}
+            
             session["match"+str(number)+"_team"]=match.team
             session["match"+str(number)+"_opponent"]=match.opponent
             session["player"] = player
