@@ -6,3 +6,4 @@ A list of all logs you've uploaded, as well as the ability to modify them can be
 Stats tab can be used to make queries to the database regarding the games you've played, parameters of the query can be modified by clicking parameters (note you need to choose a valid date range, or leave it blank to submit the query), note the "my class" and "server" query will always return no results if you haven't set your character class and server in the characters tab  
 Details about your account can be accessed by clicking on your username in the top left corner (currently change password and delete your entire account)  
 The characters tab can be accessed to see all characters you have uploaded, as well set their class and server  
+The repo also automatically creates an admin user, admin, admin. Currently the admin only has the ability to see every other username in the application, with thr "users" tab on the top right
