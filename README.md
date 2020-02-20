@@ -1,5 +1,5 @@
-[Heroku link](https://vast-refuge-33676.herokuapp.com/)
-
+[Heroku link](https://vast-refuge-33676.herokuapp.com/)  
+Heroku (and the local repo) have an admin user, admin, admin. A regular user can be created with "register" 
 
 # MyParser
 MyParser This project is for the interpretation (parsing) of combat logs provided by the role-playing game Star Wars The Old Republic (SWTOR). The goal is to provide users with statistics regarding their performance by analyzing logs provided by the user.
