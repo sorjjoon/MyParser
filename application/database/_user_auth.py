@@ -24,13 +24,19 @@ def get_user(self, username: str, password: str):
             print("Login for "+username+" failed")
             return None
 
-def insert_user(self, username: str, password: str):
+def get_role_id(self, role):
+    sql = select([self.role.c.id]).where(self.role.c.name == role)
+    with self.engine.connect() as conn:
+        rs = conn.execute(sql)
+        return rs.fetchone()[self.role.c.id]
+
+def insert_user(self, username: str, password: str, role="USER"):
     print("Adding new user "+username)
     salt = generate_new_salt()
     
     hashed = hash_password_salt(password, salt)
-    
-    sql = self.account.insert().values(username=username, password=hashed, salt=salt)
+    role_id= self.get_role_id(role)
+    sql = self.account.insert().values(username=username, password=hashed, salt=salt, role_id=role_id)
     with self.engine.connect() as conn:
         conn.execute(sql)
 

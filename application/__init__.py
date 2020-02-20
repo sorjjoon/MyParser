@@ -26,6 +26,11 @@ else:
 database = SQLAlchemy(app)
 db = data(database.engine)
 
+#inserting admin user (if one exsist, unique constraint fail)
+try:
+    db.insert_user("admin","admin", role="ADMIN")
+except:
+    pass
 
 
 #login

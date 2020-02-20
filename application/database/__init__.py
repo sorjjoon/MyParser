@@ -29,12 +29,20 @@ class data:
 
         metadata = MetaData()
 
-        
+        self.role = Table("role", metadata,
+        Column("id",Integer, primary_key=True),
+        Column("name",String(20)),
+        UniqueConstraint('name', name='role_unique' #TODO remove this (unnecessary index for a small table)
+        ))
+
         self.account = Table('account', metadata,
         Column("id",Integer, primary_key=True),
+        Column("role_id",Integer, ForeignKey("role.id", onupdate="CASCADE")),
         Column("username",String(150), nullable=False),
         Column("salt", String(144), nullable=False),
-        Column("password",String(150), nullable=False))
+        Column("password",String(150), nullable=False),
+        UniqueConstraint('username', name='username_unique')
+        )
     
      
         self.log = Table('log', metadata,
@@ -79,10 +87,30 @@ class data:
         self.engine=used_engine
         metadata.create_all(used_engine) #checks if table exsists first
 
+        #insert 1 admin user, and roles "USER" and "ADMIN to the database (if they don't exsist)"
+        
+        with self.engine.connect() as conn:
+            sql = self.role.insert().values(name="USER", id=1)
+
+            #catches unqiue contraint fail
+            try:
+                
+                conn.execute(sql)
+                print("user role inserted")
+            except:
+                pass
+            sql = self.role.insert().values(name="ADMIN", id=2)
+            try:
+                conn.execute(sql)
+                print("admin role inserted")
+
+            except:
+                pass
+
     #just importing everything in this module
     from ._domain_service import update_char, update_log, update_log_note, update_match, get_char_name_by_id, get_char_class_by_name, get_chars, get_log, get_logs, get_match_ids, get_matches, get_player_id, get_team_and_opponents, delete_log, insert_match, insert_log
-    from ._user_service import delete_user, get_user_by_id, check_user
-    from ._user_auth import get_user, hash_password, insert_user, update_password
-    
+    from ._user_service import delete_user, get_user_by_id, check_user, get_user_roles
+    from ._user_auth import get_user, hash_password, insert_user, update_password, get_role_id
+    from ._admin import list_users
     from ._stats import win_pre, player_count
     

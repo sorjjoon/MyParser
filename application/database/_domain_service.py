@@ -1,6 +1,6 @@
 # file contains all methods which deal with fetching log and matches
 
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, LargeBinary, Date, Boolean, DateTime, engine
+
 from sqlalchemy.sql import select, insert, delete, update, desc, join, distinct, Select, between
 from sqlalchemy.engine import Engine
 from application.auth.account import account

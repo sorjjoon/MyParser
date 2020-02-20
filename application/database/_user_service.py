@@ -22,16 +22,27 @@ def check_user(self, username):
             return False
 
             
+def get_user_roles(self, user_id):
+    j = self.account.join(self.role)
+    sql = select([self.role.name]).select_from(j).where(self.account.c.id==user_id)
+    with self.engine.connect as conn:
+        result_set = conn.execute(sql)
+        roles = []
+        for row in result_set:
+            roles.append(row[self.role.name])
+        result_set.close()
+    return roles
 
 def get_user_by_id(self, user_id: int):
-    sql = select([self.account]).where(self.account.c.id==user_id)
+    j = self.account.join(self.role)
+    sql = select([self.role.c.name, self.account.c.username]).select_from(j).where(self.account.c.id==user_id)
     with self.engine.connect() as conn:
         result_set = conn.execute(sql)
         row = result_set.fetchone()
         
         result_set.close()       
         if row is not None:
-            return account(row[self.account.c.id],row[self.account.c.username], row[self.account.c.password])
+            return account(user_id,row[self.account.c.username], row[self.role.c.name])
         else:
             return None
         

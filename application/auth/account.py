@@ -2,12 +2,12 @@ from flask import render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import  StringField, PasswordField
 
-
-class account:
-    def __init__(self,id, name, password):
+#Account contains only relevant information for the application
+class account: 
+    def __init__(self,id, name, role):
         self.id=id
         self.name=name
-        self.password=password
+        self.role=role
 
 
     def get_id(self):
@@ -24,6 +24,10 @@ class account:
         
     def __str__(self):
         return str(self.id)+" "+self.name
-
         
+    def get_role(self):
+        return role
+
+ 
+
 

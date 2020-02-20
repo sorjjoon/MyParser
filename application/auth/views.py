@@ -66,6 +66,16 @@ def login_auth():
     print("User " + form.username.data+ " validated")
     return redirect(url_for("index"))
 
+@app.route("/users", methods=["GET"])
+@login_required
+#method requires admin privilages
+def list_user():
+    if current_user.role != "ADMIN":
+        print("Unauthorized access by "+current_user.username)
+        return redirect(url_for("index"))
+    else:
+        users = db.list_users()
+        return render_template("auth/user_list.html", users=users)
 
 @app.route("/user", methods=["GET","POST"])
 @login_required
