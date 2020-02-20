@@ -88,7 +88,7 @@ def parse_log(log_name: str):
                 
                 if in_match:    #saves time, read only rows while we are in a match (might be a lot of rows between matches)
 
-                    row_object = read_row(row)
+                    row_object = read_row(row) 
 
                     #deserter detection is applied to owner at the start of a round
                     if "Deserter Detection {3297813328822272}" in row_object.details:     
@@ -127,9 +127,10 @@ def parse_log(log_name: str):
     finally:
         #delete file after it's been read
         f.close()
-        print("deleting "+path)
+        
         if os.path.isfile(path): 
             os.remove(path)
+            print("deleting "+path)
 
 
 
