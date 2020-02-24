@@ -10,6 +10,7 @@
           <tr>
   
               <th scope="col">Name</th>
+              <th scope="col">Log count</th>
               
           </tr>
       </thead>
@@ -17,9 +18,15 @@
         {% for user in users %}
         <tr>
             <td>
-                {{user}}
+                {{user.0}}
+
             </td>
-        </tr>
+        
+            <td>
+                {{user.1}}
+                
+            </td>
+        
         {% endfor %}
 
 

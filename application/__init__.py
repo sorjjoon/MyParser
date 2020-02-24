@@ -51,6 +51,7 @@ def load_user(user_id):
 
 #views, - imported as views1 because imports cant have the same name (but are never manually used so the name doesn't matter)
 from application.auth import views as views1
-from application import forms
 from application import views
+from application import forms
+from application.auth import admin_views
 
