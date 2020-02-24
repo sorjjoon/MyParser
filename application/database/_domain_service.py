@@ -179,8 +179,6 @@ def get_char_class_by_name(self, names: list, server=None):
     #get_id inserts player if he's not in the database TODO make this insert in bulk
     for player in names:
         self.get_player_id(player)
-
-
     sql = select([self.player.c.player_class, self.player.c.name]).where(self.player.c.name.in_(names))
     if server:
         sql = sql.where(self.player.c.server == server)

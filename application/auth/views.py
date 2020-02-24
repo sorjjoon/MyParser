@@ -9,6 +9,7 @@ from application.auth import account
 def username_free(form, field):
     if not db.check_user(field.data):
         raise ValidationError('Username in use')
+    
 class PasswordForm(FlaskForm): #TODO add old password
     password1 = PasswordField("New Password", validators=[validators.DataRequired(message=None),validators.Length(min=5, max=50, message="Password must be between 5 and 50 characters"), validators.EqualTo("password2", message='Passwords must match')])
     password2 = PasswordField("Confirm Password" )  #Only password1 needs to be validated

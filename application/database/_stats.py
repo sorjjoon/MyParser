@@ -4,6 +4,8 @@ import os
 from typing import List #so we can check param list contains only ints 
 
 #For queries in a more readable format see documentation
+
+
 def int_list_to_string(elements: list): 
     return " ("+",".join(map(str,elements))+") " #will produce for example (1,2,3), for [1,2,3]
 
@@ -12,9 +14,7 @@ def string_list_to_string(elements: list):
     
 def win_pre(self,log_ids: List[int]):
     if not log_ids:
-        return 0
-
-    
+        return 0    
     ids = int_list_to_string(log_ids)
     
     if os.environ.get("HEROKU"):
@@ -73,6 +73,7 @@ def player_count(self, match_ids: List[int], classes=None):
         GROUP BY player.name 
         ORDER BY COUNT(case match_player.side when true then 1 else null end) + COUNT(case match_player.side when false then 1 else null end) DESC;        
         """ 
+        print(sql)
     results = []
     with self.engine.connect() as conn:        
         result_set=conn.execute(text(sql))
