@@ -4,9 +4,10 @@ from application import db, app
 from flask_login import login_user, logout_user, login_required, current_user
 from application.auth import account
 
+
 @app.route("/users", methods=["GET"])
 @login_required
-#method requires admin privilages
+# method requires admin privilages
 def list_user():
     if current_user.role != "ADMIN":
         print("Unauthorized access by "+current_user.username)

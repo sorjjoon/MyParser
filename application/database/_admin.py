@@ -1,13 +1,13 @@
 #all methods admins have access to
-from sqlalchemy.sql import select, insert, delete, update, desc, join, distinct, Select, between, text
+from sqlalchemy.sql import text
 
 def list_users(self):
-    sql = text("SELECT account.username as name, count(log.owner_id) as lkm FROM log JOIN account ON log.owner_id = account.id GROUP BY account.id")
+    sql = text("SELECT account.username as name, count(log.id) as lkm FROM account LEFT OUTER JOIN LOG on log.owner_id = account.id GROUP BY account.username;")
     with self.engine.connect() as conn:
-        rs = conn.execute(sql)
+        result_set = conn.execute(sql)
         users = []
-        for row in rs:
+        for row in result_set:
             users.append((row["name"], row["lkm"]))
-        rs.close()
+        result_set.close()
         return users
 

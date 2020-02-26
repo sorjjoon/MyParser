@@ -8,7 +8,18 @@
   Total games: {{total}}
   <br>
   <button data-toggle="collapse" data-target="#params">Parameters</button>
-
+  
+    <ul>
+      {% for error in form.end.errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+      <ul>
+        {% for error in form.start.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    
   <div id=params class="collapse">
     <form class="form-horizontal" method="POST" action="{{ url_for('stats') }}">
 
@@ -95,13 +106,7 @@
                 <td>
                   {{ form.start }}
                 </td>
-                <td>
-                  <ul>
-                    {% for error in form.start.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                  </ul>
-                </td>
+                
               </tr>
               <tr>
                 <td>
@@ -110,13 +115,7 @@
                 <td>
                   {{ form.end }}
                 </td>
-                <td>
-                  <ul>
-                    {% for error in form.end.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                  </ul>
-                </td>
+               
               </tr>
             </div>
           </div>

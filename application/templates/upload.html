@@ -18,12 +18,20 @@
       </tr>
 
   </form>
+  {% if error is defined %}
+  <tr>
+    <td>
+      Upload a valid file
+    </td>
+  </tr>
+  {% endif %}
 </div>
 
 {% if matches is defined %}
 
 
 <form method="POST" action="/newlog">
+  <input type="hidden" id=session name=session_id value={{id}}>
   <!-- TODO make this more user friendly -->
   <!-- TODO validate input (round 3 can only be played if round1 != round2) -->
   <table class=".table-borderless mt-3">
@@ -34,7 +42,7 @@
       <tr>
         <td>
           Date
-          
+
         </td>
       </tr>
       <tr>
@@ -42,10 +50,24 @@
           <input type="date" name="date" required value={{date}}>
         </td>
       </tr>
+      {% if note is not defined or note is none or not note|length %}
+      <tr>
+        <td>
+          <input type="text" name=note class="form-control" placeholder="add a note for this log">
+
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td>
+          <input type="text" name=note class="form-control" placeholder="{{note}}">
+        </td>
+      </tr>
+      {% endif %}
       {% for match in matches %}
       <input type="hidden" id={{ match.number ~ "start" }} name={{ match.number ~ "start" }} value={{match.start}}>
       <input type="hidden" id={{ match.number ~ "end" }} name={{ match.number ~ "end" }} value={{match.end}}>
-      
+
       <tr>
         <td>
           <p class="font-weight-bold mt-4 mb-0 pb-0">{{match.start_string}} - {{match.end_string}}</p>
@@ -71,9 +93,9 @@
         </td>
 
       </tr>
-      
+
       <tr>
-        
+
         <td>
           round 1
           <select name={{ match.number ~ "round1" }} required>
@@ -127,19 +149,20 @@
           {% else %}
           round 3 not played
           {% endif %}
-          <tr>
-            <td>
-              <div class="form-group">
-                
-                <input type="text" name={{ match.number ~ "note" }} class="form-control" id="{{ match.number ~ "note" }}"  placeholder="add a note" {%if match.note is not none%} value={{match.note}} {% endif %}>
-                
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-          <div class="control-group mt-4 ">
-            <input type="submit" value="Submit">
+      <tr>
+        <td>
+          <div class="form-group">
+
+            <input type="text" name={{ match.number ~ "note" }} class="form-control" id="{{ match.number ~ "note" }}"
+              placeholder="add a note" {%if match.note is not none%} value={{match.note}} {% endif %}>
+
           </div>
+        </td>
+      </tr>
+      {% endfor %}
+      <div class="control-group mt-4 ">
+        <input type="submit" value="Submit">
+      </div>
     </tbody>
 
 

@@ -4,7 +4,7 @@
 
 <form method="POST" action={{ url_for('update_log', log_id=log.id) }}>
     <!-- TODO make this more user friendly -->
-    
+    <input type="hidden" name ="id" value={{id}}>
 
 
     <table class=".table-borderless mt-3">
@@ -18,10 +18,10 @@
             <input type="date" name="date" required value={{log.date}}>
           </td>
           <td>
-            {% if log.note is none %}
+            {% if log.note is none or not log.note|length %}
             <input type="text" name={{ log.id ~ "log_note" }} class="form-control" id="{{ log.id ~ "note" }}"  placeholder="add a note for this log">
             {% else %}
-            <input type="text" name={{ log.id ~ "log_note" }} class="form-control" id="{{ log.id ~ "note" }}"  value={{log.note}}>
+            <input type="text" name={{ log.id ~ "log_note" }} class="form-control" id="{{ log.id ~ "note" }}"  value="{{log.note}}">
             {% endif %}
           </td>
         </tr>
@@ -60,10 +60,10 @@
         <tr>
           <td>
             <div class="form-group">
-                {% if match.note is none %}
+                {% if match.note is none or not match.note|length %}
               <input type="text" name={{ match.id ~ "note" }} class="form-control" id="{{ match.id ~ "note" }}"  placeholder="add a note for this match">
               {% else %}
-              <input type="text" name={{ match.id ~ "note" }} class="form-control" id="{{ match.id ~ "note" }}"  value={{match.note}}>
+              <input type="text" name={{ match.id ~ "note" }} class="form-control" id="{{ match.id ~ "note" }}"  value="{{match.note}}">
               {% endif %}
             </div>
           </td>

@@ -14,7 +14,8 @@
 --(same but in a single line, syntax for sqlite (won't work is postegre, all avg(round) must be done with type casting))     
 SELECT (((SELECT COALESCE(avg(round2),0)*count(round2) from match WHERE LOG_ID IN(1,2) AND round3 is null)+(SELECT COALESCE(avg(round3),0)*count(round3) from match WHERE LOG_ID IN(1,2)))/(SELECT count(*) FROM Match WHERE LOG_ID IN(1,2)) ) AS "avg";
 
-
+--(same but postgre syntax)
+SELECT (((SELECT COALESCE(avg(round2::int),0)*count(round2) from match WHERE LOG_ID IN (1,2,3) AND round3 is null)+(SELECT COALESCE(avg(round3::int),0)*count(round3::int) from match WHERE LOG_ID IN (1,2,3)))/(SELECT count(*) FROM Match WHERE LOG_ID IN (1,2,3)) ) AS avg
 --Times user has played with other players: 
 
 SELECT COUNT(case match_player.side when true then 1 else null end) as player_side, 

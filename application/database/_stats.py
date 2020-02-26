@@ -44,10 +44,10 @@ def player_count(self, match_ids: List[int], classes=None):
     if os.environ.get("HEROKU"):
     #Diffrent versions for lite and postgre (postgre true booleans, sqlite 1 and 0)
         sql =""" 
-            SELECT COUNT(case match_player.side when true then 1 else null end) as player_side, 
-            COUNT(case match_player.side when false then 1 else null end) as player_against,
-            SUM(case match_player.side when true then COALESCE(match.round3::int,match.round2 :: int,0) else null end) / cast(COUNT(case match_player.side when true then 1.0 else null end)as decimal) as player_with_win_pre,
-            SUM(case match_player.side when false then COALESCE(match.round3::int,match.round2 :: int,0) else null end) / cast(COUNT(case match_player.side when false then 1.0 else null end)as decimal) as player_against_win_pre,
+            SELECT COUNT(case match_player.owner_side when true then 1 else null end) as player_side, 
+            COUNT(case match_player.owner_side when false then 1 else null end) as player_against,
+            SUM(case match_player.owner_side when true then COALESCE(match.round3::int,match.round2 :: int,0) else null end) / cast(COUNT(case match_player.owner_side when true then 1.0 else null end)as decimal) as player_with_win_pre,
+            SUM(case match_player.owner_side when false then COALESCE(match.round3::int,match.round2 :: int,0) else null end) / cast(COUNT(case match_player.owner_side when false then 1.0 else null end)as decimal) as player_against_win_pre,
             player.name as name,
             player.player_class as class 
             FROM "match_player"
@@ -55,15 +55,15 @@ def player_count(self, match_ids: List[int], classes=None):
             JOIN match ON match.id = match_player.match_id            
             """+where_clause+"""
             GROUP BY player.name, class 
-            ORDER BY COUNT(case match_player.side when true then 1 else null end) + COUNT(case match_player.side when false then 1 else null end) DESC;        
+            ORDER BY COUNT(case match_player.owner_side when true then 1 else null end) + COUNT(case match_player.owner_side when false then 1 else null end) DESC;        
             """
 
     else:
         sql =""" 
-        SELECT COUNT(case match_player.side when true then 1 else null end) as player_side, 
-        COUNT(case match_player.side when false then 1 else null end) as player_against,
-        SUM(case match_player.side when true then COALESCE(match.round3,match.round2 ,0) else null end) / cast(COUNT(case match_player.side when 1 then 1.0 else null end)as float) as player_with_win_pre,
-        SUM(case match_player.side when false then COALESCE(match.round3,match.round2 ,0) else null end) / cast(COUNT(case match_player.side when 0 then 1.0 else null end)as float) as player_against_win_pre,
+        SELECT COUNT(case match_player.owner_side when true then 1 else null end) as player_side, 
+        COUNT(case match_player.owner_side when false then 1 else null end) as player_against,
+        SUM(case match_player.owner_side when true then COALESCE(match.round3,match.round2 ,0) else null end) / cast(COUNT(case match_player.owner_side when 1 then 1.0 else null end)as float) as player_with_win_pre,
+        SUM(case match_player.owner_side when false then COALESCE(match.round3,match.round2 ,0) else null end) / cast(COUNT(case match_player.owner_side when 0 then 1.0 else null end)as float) as player_against_win_pre,
         player.name as name,
         player.player_class as class 
         FROM "match_player"
@@ -71,19 +71,18 @@ def player_count(self, match_ids: List[int], classes=None):
         JOIN match ON match.id = match_player.match_id
         """+where_clause+"""
         GROUP BY player.name 
-        ORDER BY COUNT(case match_player.side when true then 1 else null end) + COUNT(case match_player.side when false then 1 else null end) DESC;        
+        ORDER BY COUNT(case match_player.owner_side when true then 1 else null end) + COUNT(case match_player.owner_side when false then 1 else null end) DESC;        
         """ 
-        print(sql)
-    results = []
+    query_results = []
     with self.engine.connect() as conn:        
         result_set=conn.execute(text(sql))
         
         for row in result_set:
             
-            results.append( [row["name"], row["player_side"], row["player_against"],row["player_with_win_pre"],row["player_against_win_pre"],row["class"] ] )
+            query_results.append( [row["name"], row["player_side"], row["player_against"],row["player_with_win_pre"],row["player_against_win_pre"],row["class"] ] )
         result_set.close()
     
-    return results
+    return query_results
 
 
     

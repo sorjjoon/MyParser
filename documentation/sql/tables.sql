@@ -36,6 +36,7 @@ CREATE TABLE char (
 	PRIMARY KEY (id), 
 	FOREIGN KEY(owner_id) REFERENCES account (id) ON DELETE CASCADE
 )
+CREATE INDEX ix_char_owner_id ON char (owner_id)
 
 CREATE TABLE log (
 	id INTEGER NOT NULL, 
@@ -49,6 +50,7 @@ CREATE TABLE log (
 	FOREIGN KEY(char_id) REFERENCES char (id) ON UPDATE CASCADE
 )
 
+CREATE INDEX ix_log_owner_id ON log (owner_id)
 
 CREATE TABLE "match" (
 	id INTEGER NOT NULL, 
@@ -65,6 +67,7 @@ CREATE TABLE "match" (
 	CHECK (round3 IN (0, 1)), 
 	FOREIGN KEY(log_id) REFERENCES log (id) ON DELETE CASCADE
 )
+CREATE INDEX ix_match_log_id ON "match" (log_id)
 
 CREATE TABLE match_player (
 	player_id INTEGER NOT NULL, 
