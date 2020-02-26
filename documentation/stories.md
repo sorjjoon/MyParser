@@ -1,4 +1,19 @@
 ### User Stories  
-Using the serivce use has the ability to upload logs provided by the game to the website. The website stores the logs, and analyzes logs the log to determine how many arena games the user has played, makes a guess whether the player won or lost the round (this is not always possible, but in some cases this can be done) and checks which players the user had on their team, and on the opposing team (again this can not be done with complete precision, since the only way a log would have note of a player, is if the user had interacted with them in some way, and it might be beyond the scope of this project to account all possible ways for players to interact)
+see [help](/documentation/help.md) for specfic instructions  
+   
+Using the serivce user can upload logs provided by the game to the website. 
   
-With this information the service seeks to provide the user with numerous statistics regarding their games, such as overall win-rate, win-rate when playing with/against certain players, etc.
+After uploading, the user can see how many games he played during the log, the amount of rounds each game had, the character he used, and the names of his team mates and opponents
+
+The user can delete and modify every log they have uploaded 
+  
+The user can see all characters they have uploaded, and set the characters server and class  
+  
+The user can see a total win precentage for all games they have uploaded (not, win precentage for entire matches, not single rounds)  
+  
+The user can see a breakdown of the players they have played with/against and the user can limit the amount of matches used for this breakdown by date, their character, their class, server, and the classes of other players
+  
+The admin can see the usernames of every user registered to the site, as well as how many logs they have uploaded  
+  
+
+
