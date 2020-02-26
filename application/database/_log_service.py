@@ -133,7 +133,7 @@ def insert_log(self, owner_id: int, matches: list, date: str, char: str, note=No
             char_id = result.inserted_primary_key[0]
             
 
-        sql = self.log.insert().values(owner_id=owner_id, start_date=pydate.fromisoformat(date), log_file = None, char_id=char_id, note=note)
+        sql = self.log.insert().values(owner_id=owner_id, start_date=pydate.fromisoformat(date), char_id=char_id, note=note)
 
         result=conn.execute(sql)
         log_id = result.inserted_primary_key[0]

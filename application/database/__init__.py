@@ -54,7 +54,7 @@ class data:
                          Column("note", Text),
                          Column("owner_id", Integer, ForeignKey("account.id",
                                                                 ondelete="CASCADE"), nullable=False,  index=True),
-                         Column("log_file", LargeBinary),
+                         
                          Column("char_id", Integer, ForeignKey(
                              "char.id", onupdate="CASCADE")),
                          Column("start_date", Date))
