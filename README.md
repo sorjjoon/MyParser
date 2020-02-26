@@ -8,7 +8,7 @@ This project in particular deals with the storage of logs, and in particular log
 
 
 [User stories](/documentation/stories.md)  
-[Database](/documentation/data.png)
+[Database](/documentation/data.md)  
 [config](/documentation/config.md)  
   
 [Insturctions](/documentation/help.md)  
