@@ -10,9 +10,11 @@ This project in particular deals with the storage of logs, and in particular log
 [User stories](/documentation/stories.md)  
 [Database](/documentation/data.png)  
 [config](/documentation/config.md)  
-[Example logs for testing](/documentation/Example-logs)  
+  
 [Insturctions](/documentation/help.md)  
 [Create table, and stats queries](/documentation/sql)  
+  
+[Example logs for testing](/documentation/Example-logs)  
 Example logs are split into two folders, based on which character they are for (for creating multiple characters)
   
     
