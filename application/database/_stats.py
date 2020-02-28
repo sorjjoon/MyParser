@@ -59,6 +59,7 @@ def player_count(self, match_ids: List[int], classes=None):
             """
 
     else:
+        
         sql =""" 
         SELECT COUNT(case match_player.owner_side when true then 1 else null end) as player_side, 
         COUNT(case match_player.owner_side when false then 1 else null end) as player_against,
@@ -73,6 +74,7 @@ def player_count(self, match_ids: List[int], classes=None):
         GROUP BY player.name 
         ORDER BY COUNT(case match_player.owner_side when true then 1 else null end) + COUNT(case match_player.owner_side when false then 1 else null end) DESC;        
         """ 
+        print(sql)
     query_results = []
     with self.engine.connect() as conn:        
         result_set=conn.execute(text(sql))

@@ -2,9 +2,24 @@
 
 from flask import Flask
 import os
+
 app = Flask(__name__)
 
+#id translation
+translate_file_path = os.path.join(os.getcwd(),"application/translations.txt")
+translate_dict = {}
 
+try:
+    with open(translate_file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            if line:                           
+                parts = line.split(",") #name, id
+                translate_dict[parts[1].strip()] = parts[0]
+
+except EnvironmentError as r:
+    print(r)
+
+print(translate_dict)
 # uploads
 from flask_uploads import UploadSet, configure_uploads, TEXT
 

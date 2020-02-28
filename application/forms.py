@@ -14,7 +14,7 @@ from wtforms import (FieldList, FileField, FormField, PasswordField,
 from application import app, db, uploads
 from application.domain.log import log
 from application.domain.match import match
-from application.reader import parse_log
+from application.reader.reader import parse_log
 
 class UploadForm(FlaskForm):
     log = FileField("log")
