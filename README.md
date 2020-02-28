@@ -1,6 +1,10 @@
 [Heroku link](https://vast-refuge-33676.herokuapp.com/)  
 Heroku (and the local repo) has an admin user, admin, admin. A regular user can be created with "register" 
-
+  
+Crudeja on match (ja oikeastaan log myös, koska jokaista saraketta voi muokata UI:n kautta) ja account (käyttäjä voi muuttaa salasanaansa, nimeään ja poistaa tilinsä)  
+  
+Adminilla on toinen yhteenveto kysely (log count)    
+   
 # MyParser
 MyParser This project is for the interpretation (parsing) of combat logs provided by the role-playing game Star Wars The Old Republic (SWTOR). The goal is to provide users with statistics regarding their performance by analyzing logs provided by the user.
 
